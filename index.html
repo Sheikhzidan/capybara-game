@@ -37,7 +37,6 @@ let keys = {};
 let run = false;
 let score = 0;
 let lives = 3;
-let gameOver = false;
 
 const p = { x:100, y:360, w:60, h:38, s:5 };
 let fruits = [];
@@ -76,7 +75,6 @@ return dx*dx + dy*dy <= cr*cr;
 function resetGame(){
 score = 0;
 lives = 3;
-gameOver = false;
 p.x = 100; p.y = 360;
 fruits = [];
 rocks = [];
@@ -133,14 +131,6 @@ x.fillStyle = "#111";
 x.fillRect(p.x + p.w + 3, p.y + 14, 3, 3);
 
 drawHUD();
-
-if (gameOver) {
-x.fillStyle = "rgba(0,0,0,.45)";
-x.fillRect(250, 200, 400, 90);
-x.fillStyle = "#fff";
-x.font = "bold 28px Arial";
-x.fillText("Game Over! Click to Restart", 285, 255);
-}
 }
 
 function gameLoop(){
@@ -184,14 +174,14 @@ spawnFruit();
 }
 }
 
-// Hit rocks
+// Hit rocks -> no game over, auto continue
 for(const r of rocks){
 if(hitRectCircle(p.x,p.y,p.w,p.h,r.x,r.y,r.r)){
 lives--;
 p.x = 100; p.y = 360;
+
 if(lives <= 0){
-run = false;
-gameOver = true;
+lives = 3; // auto reset lives, keep game running
 }
 break;
 }
@@ -235,16 +225,6 @@ touchTarget = { x: t.clientX - rect.left, y: t.clientY - rect.top };
 
 c.addEventListener("touchend", () => {
 touchTarget = null;
-});
-
-// Click to start/restart
-c.addEventListener("click", () => {
-if (!run) {
-resetGame();
-run = true;
-drawScene();
-requestAnimationFrame(gameLoop);
-}
 });
 
 // Auto start on load
