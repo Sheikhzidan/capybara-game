@@ -3,15 +3,107 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Capybara Simulator: Island Life+</title>
+<title>Capybara Mini</title>
 <style>
-body{margin:0;background:#111;color:#fff;font-family:sans-serif;display:grid;place-items:center;height:100vh}
+body{margin:0;background:#0d1117;color:#fff;font-family:sans-serif;display:grid;place-items:center;height:100vh}
+#ui{position:fixed;top:10px;left:10px;background:#0008;padding:8px 10px;border-radius:8px}
+canvas{background:linear-gradient(#7fd3ff 0 55%, #6ac66a 55%);border:1px solid #333}
+button{margin-left:8px}
 </style>
 </head>
 <body>
-<div>
-<h1>Capybara Simulator: Island Life+</h1>
-<p>Deploy successful 🎉</p>
+<div id="ui">
+Score: <span id="score">0</span> |
+Lives: <span id="lives">3</span>
+<button id="start">Start</button>
 </div>
+<canvas id="c" width="900" height="500"></canvas>
+
+<script>
+const c = document.getElementById('c'), x = c.getContext('2d');
+const scoreEl = document.getElementById('score'), livesEl = document.getElementById('lives');
+const startBtn = document.getElementById('start');
+
+let keys={}, run=false, score=0, lives=3;
+let p={x:100,y:360,w:60,h:38,s:5};
+let fruits=[], rocks=[];
+
+function R(a,b){ return Math.random()*(b-a)+a; }
+function spawnFruit(){ fruits.push({x:R(50,850),y:R(220,460),r:10}); }
+function spawnRock(){ rocks.push({x:R(50,850),y:R(220,460),r:14,vx:R(-1,1),vy:R(-1,1)}); }
+function hitRectCircle(px,py,pw,ph,cx,cy,cr){
+const tx=Math.max(px,Math.min(cx,px+pw)), ty=Math.max(py,Math.min(cy,py+ph));
+const dx=cx-tx, dy=cy-ty; return dx*dx+dy*dy<=cr*cr;
+}
+function reset(){
+score=0; lives=3; p.x=100; p.y=360; fruits=[]; rocks=[];
+for(let i=0;i<6;i++) spawnFruit();
+for(let i=0;i<4;i++) spawnRock();
+scoreEl.textContent=score; livesEl.textContent=lives;
+}
+
+function draw(){
+x.clearRect(0,0,c.width,c.height);
+
+// sun
+x.fillStyle='#fff8'; x.beginPath(); x.arc(820,70,28,0,Math.PI*2); x.fill();
+
+// river
+x.fillStyle='#49bff7'; x.fillRect(0,380,c.width,60);
+
+// fruits
+for(const f of fruits){ x.fillStyle='#ff7043'; x.beginPath(); x.arc(f.x,f.y,f.r,0,Math.PI*2); x.fill(); }
+
+// rocks
+for(const r of rocks){ x.fillStyle='#777'; x.beginPath(); x.arc(r.x,r.y,r.r,0,Math.PI*2); x.fill(); }
+
+// capybara
+x.fillStyle='#8d6e63'; x.fillRect(p.x,p.y,p.w,p.h);
+x.fillStyle='#6d4c41'; x.fillRect(p.x+p.w-10,p.y+8,20,20);
+x.fillStyle='#111'; x.fillRect(p.x+p.w+3,p.y+14,3,3);
+}
+
+function loop(){
+if(!run) return;
+
+if(keys['ArrowLeft']||keys['a']) p.x-=p.s;
+if(keys['ArrowRight']||keys['d']) p.x+=p.s;
+if(keys['ArrowUp']||keys['w']) p.y-=p.s;
+if(keys['ArrowDown']||keys['s']) p.y+=p.s;
+p.x=Math.max(10,Math.min(c.width-p.w-10,p.x));
+p.y=Math.max(200,Math.min(c.height-p.h-10,p.y));
+
+for(const r of rocks){
+r.x+=r.vx; r.y+=r.vy;
+if(r.x<20||r.x>c.width-20) r.vx*=-1;
+if(r.y<200||r.y>c.height-20) r.vy*=-1;
+}
+
+for(let i=fruits.length-1;i>=0;i--){
+const f=fruits[i];
+if(hitRectCircle(p.x,p.y,p.w,p.h,f.x,f.y,f.r)){
+score+=10; scoreEl.textContent=score;
+fruits.splice(i,1); spawnFruit();
+}
+}
+
+for(const r of rocks){
+if(hitRectCircle(p.x,p.y,p.w,p.h,r.x,r.y,r.r)){
+lives--; livesEl.textContent=lives; p.x=100; p.y=360;
+if(lives<=0){ run=false; alert('Game Over! Score: '+score); }
+break;
+}
+}
+
+draw();
+requestAnimationFrame(loop);
+}
+
+document.addEventListener('keydown',e=>keys[e.key]=true);
+document.addEventListener('keyup',e=>keys[e.key]=false);
+startBtn.onclick=()=>{ reset(); run=true; draw(); requestAnimationFrame(loop); };
+
+reset(); draw();
+</script>
 </body>
 </html>
