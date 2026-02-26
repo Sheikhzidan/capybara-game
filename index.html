@@ -2,45 +2,62 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" /> 
-<meta name="x-ogp-key" content="d0462b53-483e-409d-a626-41dce5ad6a4d" id="ogp-key-meta" />  
-<title>Capybara Mini</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Capybara Idle + Active</title>
 <style>
 body{margin:0;background:#0d1117;color:#fff;font-family:sans-serif;display:grid;place-items:center;height:100vh}
 #ui{position:fixed;top:10px;left:10px;background:#0008;padding:8px 10px;border-radius:8px}
 canvas{background:linear-gradient(#7fd3ff 0 55%, #6ac66a 55%);border:1px solid #333}
 button{margin-left:8px}
+.small{opacity:.8;font-size:12px}
 </style>
 </head>
 <body>
 <div id="ui">
 Score: <span id="score">0</span> |
-Lives: <span id="lives">3</span>
+Lives: <span id="lives">3</span> |
+Mode: Idle+Active
 <button id="start">Start</button>
+<div class="small">Open রাখলেও points, move করলে bonus points</div>
 </div>
+
 <canvas id="c" width="900" height="500"></canvas>
 
 <script>
 const c = document.getElementById('c'), x = c.getContext('2d');
-const scoreEl = document.getElementById('score'), livesEl = document.getElementById('lives');
+const scoreEl = document.getElementById('score');
+const livesEl = document.getElementById('lives');
 const startBtn = document.getElementById('start');
 
 let keys={}, run=false, score=0, lives=3;
 let p={x:100,y:360,w:60,h:38,s:5};
 let fruits=[], rocks=[];
 
+// Idle + Active bonus
+let isTabVisible = true;
+let lastMoveAt = 0;
+const idleTickMs = 3000;
+const idlePoint = 1;
+const activeBonus = 2;
+
 function R(a,b){ return Math.random()*(b-a)+a; }
 function spawnFruit(){ fruits.push({x:R(50,850),y:R(220,460),r:10}); }
 function spawnRock(){ rocks.push({x:R(50,850),y:R(220,460),r:14,vx:R(-1,1),vy:R(-1,1)}); }
+
 function hitRectCircle(px,py,pw,ph,cx,cy,cr){
-const tx=Math.max(px,Math.min(cx,px+pw)), ty=Math.max(py,Math.min(cy,py+ph));
-const dx=cx-tx, dy=cy-ty; return dx*dx+dy*dy<=cr*cr;
+const tx=Math.max(px,Math.min(cx,px+pw));
+const ty=Math.max(py,Math.min(cy,py+ph));
+const dx=cx-tx, dy=cy-ty;
+return dx*dx+dy*dy<=cr*cr;
 }
+
 function reset(){
 score=0; lives=3; p.x=100; p.y=360; fruits=[]; rocks=[];
 for(let i=0;i<6;i++) spawnFruit();
 for(let i=0;i<4;i++) spawnRock();
-scoreEl.textContent=score; livesEl.textContent=lives;
+scoreEl.textContent=score;
+livesEl.textContent=lives;
+lastMoveAt = Date.now();
 }
 
 function draw(){
@@ -53,10 +70,20 @@ x.fillStyle='#fff8'; x.beginPath(); x.arc(820,70,28,0,Math.PI*2); x.fill();
 x.fillStyle='#49bff7'; x.fillRect(0,380,c.width,60);
 
 // fruits
-for(const f of fruits){ x.fillStyle='#ff7043'; x.beginPath(); x.arc(f.x,f.y,f.r,0,Math.PI*2); x.fill(); }
+for(const f of fruits){
+x.fillStyle='#ff7043';
+x.beginPath();
+x.arc(f.x,f.y,f.r,0,Math.PI*2);
+x.fill();
+}
 
 // rocks
-for(const r of rocks){ x.fillStyle='#777'; x.beginPath(); x.arc(r.x,r.y,r.r,0,Math.PI*2); x.fill(); }
+for(const r of rocks){
+x.fillStyle='#777';
+x.beginPath();
+x.arc(r.x,r.y,r.r,0,Math.PI*2);
+x.fill();
+}
 
 // capybara
 x.fillStyle='#8d6e63'; x.fillRect(p.x,p.y,p.w,p.h);
@@ -67,10 +94,14 @@ x.fillStyle='#111'; x.fillRect(p.x+p.w+3,p.y+14,3,3);
 function loop(){
 if(!run) return;
 
-if(keys['ArrowLeft']||keys['a']) p.x-=p.s;
-if(keys['ArrowRight']||keys['d']) p.x+=p.s;
-if(keys['ArrowUp']||keys['w']) p.y-=p.s;
-if(keys['ArrowDown']||keys['s']) p.y+=p.s;
+let moved = false;
+if(keys['ArrowLeft']||keys['a']) { p.x-=p.s; moved=true; }
+if(keys['ArrowRight']||keys['d']) { p.x+=p.s; moved=true; }
+if(keys['ArrowUp']||keys['w']) { p.y-=p.s; moved=true; }
+if(keys['ArrowDown']||keys['s']) { p.y+=p.s; moved=true; }
+
+if(moved) lastMoveAt = Date.now();
+
 p.x=Math.max(10,Math.min(c.width-p.w-10,p.x));
 p.y=Math.max(200,Math.min(c.height-p.h-10,p.y));
 
@@ -80,18 +111,27 @@ if(r.x<20||r.x>c.width-20) r.vx*=-1;
 if(r.y<200||r.y>c.height-20) r.vy*=-1;
 }
 
+// fruit collect
 for(let i=fruits.length-1;i>=0;i--){
 const f=fruits[i];
 if(hitRectCircle(p.x,p.y,p.w,p.h,f.x,f.y,f.r)){
-score+=10; scoreEl.textContent=score;
-fruits.splice(i,1); spawnFruit();
+score+=10;
+scoreEl.textContent=score;
+fruits.splice(i,1);
+spawnFruit();
 }
 }
 
+// rock hit
 for(const r of rocks){
 if(hitRectCircle(p.x,p.y,p.w,p.h,r.x,r.y,r.r)){
-lives--; livesEl.textContent=lives; p.x=100; p.y=360;
-if(lives<=0){ run=false; alert('Game Over! Score: '+score); }
+lives--;
+livesEl.textContent=lives;
+p.x=100; p.y=360;
+if(lives<=0){
+run=false;
+alert('Game Over! Score: ' + score);
+}
 break;
 }
 }
@@ -100,11 +140,62 @@ draw();
 requestAnimationFrame(loop);
 }
 
+// Idle points loop
+setInterval(() => {
+if(!run) return;
+if(!isTabVisible) return; // hidden tab = no idle reward
+
+score += idlePoint;
+
+const recentlyActive = (Date.now() - lastMoveAt) < 4000;
+if(recentlyActive) score += activeBonus;
+
+scoreEl.textContent = score;
+}, idleTickMs);
+
+// visibility
+document.addEventListener("visibilitychange", () => {
+isTabVisible = (document.visibilityState === "visible");
+});
+
+// touch controls (mobile)
+let touchTarget = null;
+c.addEventListener('touchstart', (e) => {
+e.preventDefault();
+const t = e.touches[0], rect = c.getBoundingClientRect();
+touchTarget = {x:t.clientX-rect.left, y:t.clientY-rect.top};
+}, {passive:false});
+
+c.addEventListener('touchmove', (e) => {
+e.preventDefault();
+const t = e.touches[0], rect = c.getBoundingClientRect();
+touchTarget = {x:t.clientX-rect.left, y:t.clientY-rect.top};
+lastMoveAt = Date.now();
+}, {passive:false});
+
+c.addEventListener('touchend', () => { touchTarget = null; });
+
+setInterval(() => {
+if(!run || !touchTarget) return;
+const dx = touchTarget.x - (p.x + p.w/2);
+const dy = touchTarget.y - (p.y + p.h/2);
+p.x += Math.sign(dx) * Math.min(Math.abs(dx), p.s);
+p.y += Math.sign(dy) * Math.min(Math.abs(dy), p.s);
+lastMoveAt = Date.now();
+}, 16);
+
 document.addEventListener('keydown',e=>keys[e.key]=true);
 document.addEventListener('keyup',e=>keys[e.key]=false);
-startBtn.onclick=()=>{ reset(); run=true; draw(); requestAnimationFrame(loop); };
 
-reset(); draw();
+startBtn.onclick=()=>{
+reset();
+run=true;
+draw();
+requestAnimationFrame(loop);
+};
+
+reset();
+draw();
 </script>
 </body>
 </html>
