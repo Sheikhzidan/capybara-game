@@ -3,26 +3,31 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Capybara Pretty Idle</title>
+
+<!-- Play.fun SDK -->
+<meta name="x-ogp-key" content="d0462b53-483e-409d-a626-41dce5ad6a4d" />
+<script src="https://sdk.play.fun"></script>
+
+<title>Capybara SDK Game</title>
 <style>
 * { box-sizing: border-box; }
-body {
-margin: 0;
-height: 100vh;
-display: grid;
-place-items: center;
-background: radial-gradient(circle at 25% 20%, #1a2b44 0%, #0d1524 55%, #070c14 100%);
-font-family: Inter, Arial, sans-serif;
-overflow: hidden;
+body{
+margin:0;
+height:100vh;
+display:grid;
+place-items:center;
+background:radial-gradient(circle at 25% 20%, #1a2b44 0%, #0d1524 55%, #070c14 100%);
+font-family:Inter,Arial,sans-serif;
+overflow:hidden;
 }
-canvas {
-width: min(96vw, 960px);
-height: auto;
-border-radius: 18px;
-border: 1px solid rgba(255,255,255,.14);
-box-shadow: 0 20px 60px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.05);
-background: #7ecff8;
-cursor: pointer;
+canvas{
+width:min(96vw,960px);
+height:auto;
+border-radius:18px;
+border:1px solid rgba(255,255,255,.14);
+box-shadow:0 20px 60px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.05);
+background:#7ecff8;
+cursor:pointer;
 }
 </style>
 </head>
@@ -30,28 +35,29 @@ cursor: pointer;
 <canvas id="game" width="960" height="540"></canvas>
 
 <script>
+/* =========================
+SDK INIT
+========================= */
+const GAME_ID = "562396db-e86e-4537-b5a3-2a1dbdb39778";
+const ogp = new OpenGameSDK({
+ui: { usePointsWidget: true, theme: "dark" },
+logLevel: "warn"
+});
+
+let sdkReady = false;
+ogp.on("OnReady", () => { sdkReady = true; console.log("SDK ready"); });
+ogp.on("LoginSuccess", () => console.log("Logged in:", ogp.playerId));
+ogp.on("SavePointsSuccess", () => console.log("Points saved"));
+ogp.on("SavePointsFailed", () => console.log("Save failed"));
+ogp.on("SavePointsCancelled", () => console.log("Save cancelled"));
+
+ogp.init({ gameId: GAME_ID });
+
+/* =========================
+GAME STATE
+========================= */
 const cv = document.getElementById("game");
 const ctx = cv.getContext("2d");
-
-/* ===== Play.fun score submit ===== */
-const SCORE_API = "https://playfun-score-server-production.up.railway.app/api/score";
-const playerId = localStorage.getItem("pf_player_id") || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
-localStorage.setItem("pf_player_id", playerId);
-
-async function pushPoints(points) {
-if (!points || points <= 0) return;
-try {
-await fetch(SCORE_API, {
-method: "POST",
-headers: { "content-type": "application/json" },
-body: JSON.stringify({ playerId, points })
-});
-} catch (e) {
-// silent fail
-console.log("score push failed");
-}
-}
-/* ================================ */
 
 let run = true;
 let score = 0;
@@ -61,188 +67,117 @@ let touch = null;
 
 let isVisible = true;
 let lastMoveAt = Date.now();
-const idleTickMs = 3000;
-const idlePoint = 1;
-const activeBonus = 2;
 
-const p = { x: 140, y: 390, w: 74, h: 44, s: 5.2 };
-let fruits = [];
-let rocks = [];
-let particles = [];
+const roundSeconds = 60;
+let roundLeft = roundSeconds;
+let roundEnded = false;
+
+const p = { x:140, y:390, w:74, h:44, s:5.2 };
+let fruits = [], rocks = [], particles = [];
 
 const clouds = Array.from({ length: 6 }, (_, i) => ({
-x: Math.random() * 960,
-y: 45 + i * 32 + Math.random() * 12,
-w: 80 + Math.random() * 80,
-s: 0.25 + Math.random() * 0.25
+x: Math.random() * 960, y: 45 + i * 32 + Math.random() * 12, s: .25 + Math.random() * .25
 }));
 
-function R(a, b) { return Math.random() * (b - a) + a; }
-function spawnFruit() { fruits.push({ x: R(70, 890), y: R(260, 500), r: 10, b: R(0, Math.PI * 2) }); }
-function spawnRock() { rocks.push({ x: R(90, 880), y: R(280, 510), r: R(12, 18), vx: R(-1.1, 1.1), vy: R(-0.9, 0.9) }); }
+function R(a,b){ return Math.random()*(b-a)+a; }
+function spawnFruit(){ fruits.push({x:R(70,890),y:R(260,500),r:10,b:R(0,Math.PI*2)}); }
+function spawnRock(){ rocks.push({x:R(90,880),y:R(280,510),r:R(12,18),vx:R(-1.1,1.1),vy:R(-.9,.9)}); }
 
-function burst(x, y, color = "#ffd166") {
-for (let i = 0; i < 12; i++) {
-particles.push({ x, y, vx: R(-2.2, 2.2), vy: R(-2.2, 2.2), life: 28, c: color });
-}
+function burst(x,y,color="#ffd166"){
+for(let i=0;i<12;i++) particles.push({x,y,vx:R(-2.2,2.2),vy:R(-2.2,2.2),life:28,c:color});
 }
 
-function hitRectCircle(px, py, pw, ph, cx, cy, cr) {
-const tx = Math.max(px, Math.min(cx, px + pw));
-const ty = Math.max(py, Math.min(cy, py + ph));
-const dx = cx - tx, dy = cy - ty;
-return dx * dx + dy * dy <= cr * cr;
+function hitRectCircle(px,py,pw,ph,cx,cy,cr){
+const tx=Math.max(px,Math.min(cx,px+pw));
+const ty=Math.max(py,Math.min(cy,py+ph));
+const dx=cx-tx, dy=cy-ty;
+return dx*dx+dy*dy<=cr*cr;
 }
 
-function reset() {
-score = 0;
-lives = 3;
-p.x = 140; p.y = 390;
-fruits = []; rocks = []; particles = [];
-for (let i = 0; i < 8; i++) spawnFruit();
-for (let i = 0; i < 5; i++) spawnRock();
-lastMoveAt = Date.now();
+/* SDK scoring helper */
+function addSdkPoints(n){
+if (!sdkReady) return;
+try { ogp.addPoints(n); } catch {}
 }
 
-function drawCloud(cl) {
-ctx.fillStyle = "rgba(255,255,255,.68)";
-ctx.beginPath();
-ctx.arc(cl.x, cl.y, 18, 0, Math.PI * 2);
-ctx.arc(cl.x + 24, cl.y - 8, 23, 0, Math.PI * 2);
-ctx.arc(cl.x + 50, cl.y, 18, 0, Math.PI * 2);
-ctx.fill();
-}
+async function endRoundAndSave(){
+if (roundEnded) return;
+roundEnded = true;
+try {
+if (sdkReady) await ogp.endGame(); // blocking modal (expected)
+} catch {}
+// new round auto start
+setTimeout(() => {
+reset();
+roundEnded = false;
+run = true;
+requestAnimationFrame(loop);
+}, 1500);
+}ctx.fillStyle=sun; ctx.beginPath(); ctx.arc(835,86,72,0,Math.PI*2); ctx.fill();
+ctx.fillStyle="rgba(245,250,255,.85)"; ctx.beginPath(); ctx.arc(835,86,24,0,Math.PI*2); ctx.fill();
 
-function drawBG() {
-const g = ctx.createLinearGradient(0, 0, 0, 540);
-g.addColorStop(0, "#8bd9ff");
-g.addColorStop(.55, "#79ccf0");
-g.addColorStop(.55, "#79c86e");
-g.addColorStop(1, "#68bf61");
-ctx.fillStyle = g;
-ctx.fillRect(0, 0, 960, 540);
-
-const sun = ctx.createRadialGradient(835, 86, 14, 835, 86, 72);
-sun.addColorStop(0, "rgba(255,255,230,.95)");
-sun.addColorStop(1, "rgba(255,255,230,0)");
-ctx.fillStyle = sun;
-ctx.beginPath();
-ctx.arc(835, 86, 72, 0, Math.PI * 2);
-ctx.fill();
-
-ctx.fillStyle = "rgba(245,250,255,.85)";
-ctx.beginPath();
-ctx.arc(835, 86, 24, 0, Math.PI * 2);
-ctx.fill();
-
-clouds.forEach(cl => {
+clouds.forEach(cl=>{
 drawCloud(cl);
 cl.x += cl.s;
-if (cl.x > 1030) cl.x = -90;
+if(cl.x > 1030) cl.x = -90;
 });
 
-ctx.fillStyle = "#74c96b";
-ctx.fillRect(0, 280, 960, 115);
+ctx.fillStyle="#74c96b"; ctx.fillRect(0,280,960,115);
+ctx.fillStyle="#66bc60"; ctx.beginPath();
+ctx.moveTo(0,395); ctx.lineTo(960,366); ctx.lineTo(960,425); ctx.lineTo(0,425); ctx.closePath(); ctx.fill();
 
-ctx.fillStyle = "#66bc60";
-ctx.beginPath();
-ctx.moveTo(0, 395);
-ctx.lineTo(960, 366);
-ctx.lineTo(960, 425);
-ctx.lineTo(0, 425);
-ctx.closePath();
-ctx.fill();
+const rg = ctx.createLinearGradient(0,390,0,460);
+rg.addColorStop(0,"#4ec1f8"); rg.addColorStop(1,"#3fa9e1");
+ctx.fillStyle=rg; ctx.fillRect(0,390,960,70);
+ctx.fillStyle="rgba(255,255,255,.18)";
+ctx.fillRect(0,404,960,4); ctx.fillRect(0,431,960,3);
 
-const rg = ctx.createLinearGradient(0, 390, 0, 460);
-rg.addColorStop(0, "#4ec1f8");
-rg.addColorStop(1, "#3fa9e1");
-ctx.fillStyle = rg;
-ctx.fillRect(0, 390, 960, 70);
-
-ctx.fillStyle = "rgba(255,255,255,.18)";
-ctx.fillRect(0, 404, 960, 4);
-ctx.fillRect(0, 431, 960, 3);
-
-ctx.fillStyle = "#6ac464";
-ctx.beginPath();
-ctx.moveTo(0, 460);
-ctx.lineTo(960, 441);
-ctx.lineTo(960, 540);
-ctx.lineTo(0, 540);
-ctx.closePath();
-ctx.fill();
+ctx.fillStyle="#6ac464"; ctx.beginPath();
+ctx.moveTo(0,460); ctx.lineTo(960,441); ctx.lineTo(960,540); ctx.lineTo(0,540); ctx.closePath(); ctx.fill();
 }
 
-function drawFruit(f) {
-const yy = f.y + Math.sin(f.b) * 3;
-f.b += .05;
-ctx.fillStyle = "#ff7a45";
-ctx.beginPath();
-ctx.arc(f.x, yy, f.r, 0, Math.PI * 2);
-ctx.fill();
-ctx.fillStyle = "#2f8a3e";
-ctx.fillRect(f.x - 2, yy - f.r - 6, 4, 7);
-ctx.fillStyle = "rgba(255,255,255,.35)";
-ctx.beginPath();
-ctx.arc(f.x - 3, yy - 3, 3, 0, Math.PI * 2);
-ctx.fill();
+function drawFruit(f){
+const yy = f.y + Math.sin(f.b)*3; f.b += .05;
+ctx.fillStyle="#ff7a45"; ctx.beginPath(); ctx.arc(f.x,yy,f.r,0,Math.PI*2); ctx.fill();
+ctx.fillStyle="#2f8a3e"; ctx.fillRect(f.x-2,yy-f.r-6,4,7);
 }
 
-function drawRock(r) {
-ctx.fillStyle = "#7b818a";
-ctx.beginPath();
-ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2);
-ctx.fill();
-ctx.fillStyle = "rgba(255,255,255,.18)";
-ctx.beginPath();
-ctx.arc(r.x - 3, r.y - 4, r.r * .35, 0, Math.PI * 2);
-ctx.fill();
+function drawRock(r){
+ctx.fillStyle="#7b818a"; ctx.beginPath(); ctx.arc(r.x,r.y,r.r,0,Math.PI*2); ctx.fill();
 }
 
-function drawCapy() {
-ctx.fillStyle = "rgba(0,0,0,.2)";
-ctx.beginPath();
-ctx.ellipse(p.x + p.w / 2, p.y + p.h + 7, p.w * .46, 7, 0, 0, Math.PI * 2);
-ctx.fill();
-
-ctx.fillStyle = "#8b665a";
-ctx.fillRect(p.x, p.y, p.w, p.h);
-ctx.fillStyle = "#795548";
-ctx.fillRect(p.x + p.w - 10, p.y + 8, 23, 22);
-ctx.fillStyle = "#5e3f36";
-ctx.fillRect(p.x + 8, p.y + p.h - 3, 10, 7);
-ctx.fillRect(p.x + p.w - 20, p.y + p.h - 3, 10, 7);
-ctx.fillStyle = "#141414";
-ctx.fillRect(p.x + p.w + 5, p.y + 15, 3, 3);
-ctx.fillStyle = "rgba(255,255,255,.24)";
-ctx.fillRect(p.x + 6, p.y + 6, 14, 4);
+function drawCapy(){
+ctx.fillStyle="rgba(0,0,0,.2)";
+ctx.beginPath(); ctx.ellipse(p.x+p.w/2,p.y+p.h+7,p.w*.46,7,0,0,Math.PI*2); ctx.fill();
+ctx.fillStyle="#8b665a"; ctx.fillRect(p.x,p.y,p.w,p.h);
+ctx.fillStyle="#795548"; ctx.fillRect(p.x+p.w-10,p.y+8,23,22);
+ctx.fillStyle="#141414"; ctx.fillRect(p.x+p.w+5,p.y+15,3,3);
 }
 
-function drawHUD() {
-ctx.fillStyle = "rgba(12,18,28,.45)";
-ctx.fillRect(14, 14, 220, 54);
-ctx.strokeStyle = "rgba(255,255,255,.16)";
-ctx.strokeRect(14, 14, 220, 54);
-ctx.fillStyle = "#fff";
-ctx.font = "bold 24px Inter, Arial";
-ctx.fillText("Score: " + score, 24, 49); // Lives text removed
+function drawHUD(){
+ctx.fillStyle="rgba(12,18,28,.45)";
+ctx.fillRect(14,14,260,66);
+ctx.strokeStyle="rgba(255,255,255,.16)";
+ctx.strokeRect(14,14,260,66);
+ctx.fillStyle="#fff";
+ctx.font="bold 22px Inter, Arial";
+ctx.fillText("Score: " + score, 24, 42);
+ctx.fillText("Time: " + roundLeft + "s", 24, 68);
 }
 
-function drawParticles() {
-for (let i = particles.length - 1; i >= 0; i--) {
+function drawParticles(){
+for(let i=particles.length-1;i>=0;i--){
 const pz = particles[i];
-pz.x += pz.vx;
-pz.y += pz.vy;
-pz.life--;
-ctx.globalAlpha = Math.max(0, pz.life / 28);
+pz.x += pz.vx; pz.y += pz.vy; pz.life--;
+ctx.globalAlpha = Math.max(0,pz.life/28);
 ctx.fillStyle = pz.c;
-ctx.fillRect(pz.x, pz.y, 3, 3);
-if (pz.life <= 0) particles.splice(i, 1);
+ctx.fillRect(pz.x,pz.y,3,3);
+if(pz.life<=0) particles.splice(i,1);
 }
 ctx.globalAlpha = 1;
 }
 
-function draw() {
+function draw(){
 drawBG();
 fruits.forEach(drawFruit);
 rocks.forEach(drawRock);
@@ -251,51 +186,50 @@ drawParticles();
 drawHUD();
 }
 
-function loop() {
-if (!run) return;
+function loop(){
+if(!run || roundEnded) return;
 
 let moved = false;
-if (keys["ArrowLeft"] || keys["a"] || keys["A"]) { p.x -= p.s; moved = true; }
-if (keys["ArrowRight"] || keys["d"] || keys["D"]) { p.x += p.s; moved = true; }
-if (keys["ArrowUp"] || keys["w"] || keys["W"]) { p.y -= p.s; moved = true; }
-if (keys["ArrowDown"] || keys["s"] || keys["S"]) { p.y += p.s; moved = true; }
+if(keys["ArrowLeft"]||keys["a"]||keys["A"]){ p.x-=p.s; moved=true; }
+if(keys["ArrowRight"]||keys["d"]||keys["D"]){ p.x+=p.s; moved=true; }
+if(keys["ArrowUp"]||keys["w"]||keys["W"]){ p.y-=p.s; moved=true; }
+if(keys["ArrowDown"]||keys["s"]||keys["S"]){ p.y+=p.s; moved=true; }
 
-if (touch) {
-const dx = touch.x - (p.x + p.w / 2), dy = touch.y - (p.y + p.h / 2);
-p.x += Math.sign(dx) * Math.min(Math.abs(dx), p.s);
-p.y += Math.sign(dy) * Math.min(Math.abs(dy), p.s);
+if(touch){
+const dx = touch.x - (p.x+p.w/2), dy = touch.y - (p.y+p.h/2);
+p.x += Math.sign(dx)*Math.min(Math.abs(dx),p.s);
+p.y += Math.sign(dy)*Math.min(Math.abs(dy),p.s);
 moved = true;
 }
 
-if (moved) lastMoveAt = Date.now();
+if(moved) lastMoveAt = Date.now();
 
-p.x = Math.max(14, Math.min(960 - p.w - 14, p.x));
-p.y = Math.max(250, Math.min(540 - p.h - 14, p.y));
+p.x = Math.max(14,Math.min(960-p.w-14,p.x));
+p.y = Math.max(250,Math.min(540-p.h-14,p.y));
 
-rocks.forEach(r => {
-r.x += r.vx;
-r.y += r.vy;
-if (r.x < 22 || r.x > 938) r.vx *= -1;
-if (r.y < 265 || r.y > 520) r.vy *= -1;
+rocks.forEach(r=>{
+r.x += r.vx; r.y += r.vy;
+if(r.x<22||r.x>938) r.vx*=-1;
+if(r.y<265||r.y>520) r.vy*=-1;
 });
 
-for (let i = fruits.length - 1; i >= 0; i--) {
+for(let i=fruits.length-1;i>=0;i--){
 const f = fruits[i];
-if (hitRectCircle(p.x, p.y, p.w, p.h, f.x, f.y, f.r)) {
+if(hitRectCircle(p.x,p.y,p.w,p.h,f.x,f.y,f.r)){
 score += 10;
-pushPoints(10); // send to leaderboard backend
-burst(f.x, f.y, "#ffd166");
-fruits.splice(i, 1);
+addSdkPoints(10);
+burst(f.x,f.y,"#ffd166");
+fruits.splice(i,1);
 spawnFruit();
 }
 }
 
-for (const r of rocks) {
-if (hitRectCircle(p.x, p.y, p.w, p.h, r.x, r.y, r.r)) {
+for(const r of rocks){
+if(hitRectCircle(p.x,p.y,p.w,p.h,r.x,r.y,r.r)){
 lives--;
-burst(p.x + p.w / 2, p.y + p.h / 2, "#ff6b6b");
-p.x = 140; p.y = 390;
-if (lives <= 0) lives = 3; // auto continue
+burst(p.x+p.w/2,p.y+p.h/2,"#ff6b6b");
+p.x=140; p.y=390;
+if(lives<=0) lives=3;
 break;
 }
 }
@@ -304,39 +238,42 @@ draw();
 requestAnimationFrame(loop);
 }
 
-// Idle points -> backend send
-setInterval(() => {
-if (!run || !isVisible) return;
-let gained = idlePoint;
-if (Date.now() - lastMoveAt < 4000) gained += activeBonus;
-
+/* idle + active bonus points */
+setInterval(()=>{
+if(!run || roundEnded || !isVisible) return;
+let gained = 1;
+if(Date.now()-lastMoveAt < 4000) gained += 1;
 score += gained;
-pushPoints(gained);
-}, idleTickMs);
-document.addEventListener("visibilitychange", () => {
-isVisible = document.visibilityState === "visible";
-});
-document.addEventListener("keydown", e => keys[e.key] = true);
-document.addEventListener("keyup", e => keys[e.key] = false);
+addSdkPoints(gained);
+}, 3000);
 
-cv.addEventListener("touchstart", (e) => {
+/* round timer */
+setInterval(()=>{
+if(!run || roundEnded) return;
+roundLeft--;
+if(roundLeft <= 0){
+run = false;
+endRoundAndSave();
+}
+}, 1000);
+
+document.addEventListener("visibilitychange",()=>{ isVisible = document.visibilityState==="visible"; });
+document.addEventListener("keydown",e=>keys[e.key]=true);
+document.addEventListener("keyup",e=>keys[e.key]=false);
+
+cv.addEventListener("touchstart",(e)=>{
 e.preventDefault();
-const t = e.touches[0], r = cv.getBoundingClientRect();
-touch = { x: t.clientX - r.left, y: t.clientY - r.top };
-}, { passive: false });
+const t=e.touches[0], r=cv.getBoundingClientRect();
+touch={x:t.clientX-r.left,y:t.clientY-r.top};
+},{passive:false});
 
-cv.addEventListener("touchmove", (e) => {
+cv.addEventListener("touchmove",(e)=>{
 e.preventDefault();
-const t = e.touches[0], r = cv.getBoundingClientRect();
-touch = { x: t.clientX - r.left, y: t.clientY - r.top };
-}, { passive: false });
+const t=e.touches[0], r=cv.getBoundingClientRect();
+touch={x:t.clientX-r.left,y:t.clientY-r.top};
+},{passive:false});
 
-cv.addEventListener("touchend", () => { touch = null; });
-
-// optional final ping on close
-window.addEventListener("beforeunload", () => {
-pushPoints(1);
-});
+cv.addEventListener("touchend",()=>{ touch=null; });
 
 // auto start
 reset();
@@ -345,3 +282,30 @@ requestAnimationFrame(loop);
 </script>
 </body>
 </html>
+
+
+function reset(){
+score = 0; lives = 3; roundLeft = roundSeconds;
+p.x = 140; p.y = 390;
+fruits = []; rocks = []; particles = [];
+for(let i=0;i<8;i++) spawnFruit();
+for(let i=0;i<5;i++) spawnRock();
+lastMoveAt = Date.now();
+}
+
+function drawCloud(cl){
+ctx.fillStyle="rgba(255,255,255,.68)";
+ctx.beginPath();
+ctx.arc(cl.x,cl.y,18,0,Math.PI*2);
+ctx.arc(cl.x+24,cl.y-8,23,0,Math.PI*2);
+ctx.arc(cl.x+50,cl.y,18,0,Math.PI*2);
+ctx.fill();
+}
+
+function drawBG(){
+const g = ctx.createLinearGradient(0,0,0,540);
+g.addColorStop(0,"#8bd9ff"); g.addColorStop(.55,"#79ccf0"); g.addColorStop(.55,"#79c86e"); g.addColorStop(1,"#68bf61");
+ctx.fillStyle=g; ctx.fillRect(0,0,960,540);
+
+const sun = ctx.createRadialGradient(835,86,14,835,86,72);
+sun.addColorStop(0,"rgba(255,255,230,.95)"); sun.addColorStop(1,"rgba(255,255,230,0)");
