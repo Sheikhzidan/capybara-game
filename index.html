@@ -3,186 +3,221 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Capybara Idle + Active</title>
+<title>Capybara Idle + Active (Pretty)</title>
 <style>
 * { box-sizing: border-box; }
 body{
 margin:0;
-background:#0d1117;
+background: radial-gradient(circle at 30% 20%, #152238 0%, #0b1220 60%, #070b12 100%);
 color:#fff;
-font-family:Arial, sans-serif;
+font-family:Inter, Arial, sans-serif;
 display:grid;
 place-items:center;
 height:100vh;
 overflow:hidden;
 }
-
 canvas{
-border:1px solid #333;
-background:linear-gradient(#7fd3ff 0 55%, #6ac66a 55%);
+border:1px solid rgba(255,255,255,.15);
+border-radius:16px;
+box-shadow:0 20px 60px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.05);
 max-width:95vw;
 height:auto;
 cursor:pointer;
+background:#7ecff8;
 }
 </style>
 </head>
 <body>
-<canvas id="c" width="900" height="500"></canvas>
+<canvas id="c" width="960" height="540"></canvas>
 
 <script>
 const c = document.getElementById('c');
 const x = c.getContext('2d');
 
-let keys = {};
-let run = false;
-let score = 0;
-let lives = 3;
-
-const p = { x:100, y:360, w:60, h:38, s:5 };
-let fruits = [];
-let rocks = [];
-
-// Idle + Active Bonus
-let isTabVisible = true;
-let lastMoveAt = 0;
-const idleTickMs = 3000;
-const idlePoint = 1;
-const activeBonus = 2;
-
-// touch controls
+let keys = {}, run = true, score = 0, lives = 3;
+const p = { x:140, y:390, w:72, h:42, s:5.2 };
+let fruits = [], rocks = [], sparkles = [];
 let touchTarget = null;
 
+let isTabVisible = true, lastMoveAt = Date.now();
+const idleTickMs = 3000, idlePoint = 1, activeBonus = 2;
+
+const clouds = Array.from({length:6}, (_,i)=>({
+x: Math.random()*960, y: 40 + i*35 + Math.random()*20, w: 70+Math.random()*90, s: .2+Math.random()*.35
+}));
+
 function R(a,b){ return Math.random()*(b-a)+a; }
-
-function spawnFruit(){
-fruits.push({ x:R(50,850), y:R(220,460), r:10 });
-}
-
-function spawnRock(){
-rocks.push({
-x:R(50,850), y:R(220,460), r:14,
-vx:R(-1,1), vy:R(-1,1)
-});
-}
+function spawnFruit(){ fruits.push({ x:R(70,890), y:R(260,490), r:10, bob:R(0,Math.PI*2) }); }
+function spawnRock(){ rocks.push({ x:R(90,880), y:R(280,500), r:R(12,17), vx:R(-1.1,1.1), vy:R(-.8,.8) }); }
 
 function hitRectCircle(px,py,pw,ph,cx,cy,cr){
-const tx = Math.max(px, Math.min(cx, px+pw));
-const ty = Math.max(py, Math.min(cy, py+ph));
-const dx = cx - tx, dy = cy - ty;
-return dx*dx + dy*dy <= cr*cr;
+const tx=Math.max(px,Math.min(cx,px+pw)), ty=Math.max(py,Math.min(cy,py+ph));
+const dx=cx-tx, dy=cy-ty; return dx*dx+dy*dy<=cr*cr;
+}
+
+function sparkle(cx,cy,color="#ffd166"){
+for(let i=0;i<12;i++){
+sparkles.push({x:cx,y:cy,vx:R(-2.2,2.2),vy:R(-2.2,2.2),life:28,c:color});
+}
 }
 
 function resetGame(){
-score = 0;
-lives = 3;
-p.x = 100; p.y = 360;
-fruits = [];
-rocks = [];
-for(let i=0;i<6;i++) spawnFruit();
-for(let i=0;i<4;i++) spawnRock();
+score = 0; lives = 3;
+p.x = 140; p.y = 390;
+fruits = []; rocks = []; sparkles = [];
+for(let i=0;i<8;i++) spawnFruit();
+for(let i=0;i<5;i++) spawnRock();
 lastMoveAt = Date.now();
 }
 
-function drawHUD(){
-x.fillStyle = "rgba(0,0,0,.45)";
-x.fillRect(10,10,260,58);
+function drawCloud(cl){
+x.fillStyle = "rgba(255,255,255,.65)";
+x.beginPath();
+x.arc(cl.x,cl.y,18,0,Math.PI*2);
+x.arc(cl.x+22,cl.y-8,22,0,Math.PI*2);
+x.arc(cl.x+48,cl.y,18,0,Math.PI*2);
+x.fill();
+}
 
-x.fillStyle = "#fff";
-x.font = "bold 18px Arial";
-x.fillText("Score: " + score, 20, 34);
-x.fillText("Lives: " + lives, 20, 58);
+function drawBackground(){
+// sky gradient
+const g = x.createLinearGradient(0,0,0,540);
+g.addColorStop(0,"#87d8ff");
+g.addColorStop(.58,"#7fcdf1");
+g.addColorStop(.58,"#79c76e");
+g.addColorStop(1,"#6abf64");
+x.fillStyle = g; x.fillRect(0,0,960,540);
+
+// sun glow
+const sun = x.createRadialGradient(830,85,12,830,85,70);
+sun.addColorStop(0,"rgba(255,255,220,.95)");
+sun.addColorStop(1,"rgba(255,255,220,0)");
+x.fillStyle = sun; x.beginPath(); x.arc(830,85,70,0,Math.PI*2); x.fill();
+x.fillStyle="rgba(245,250,255,.85)"; x.beginPath(); x.arc(830,85,24,0,Math.PI*2); x.fill();
+
+// clouds
+clouds.forEach(cl => {
+drawCloud(cl);
+cl.x += cl.s;
+if(cl.x > 1020) cl.x = -80;
+});
+
+// layered grass
+x.fillStyle="#73c56a"; x.fillRect(0,280,960,115);
+x.fillStyle="#66ba5f"; x.beginPath();
+x.moveTo(0,395); x.lineTo(960,365); x.lineTo(960,425); x.lineTo(0,425); x.closePath(); x.fill();
+
+// river with shine
+const rg = x.createLinearGradient(0,0,0,70);
+rg.addColorStop(0,"#4dbef7"); rg.addColorStop(1,"#3ea7df");
+x.fillStyle = rg; x.fillRect(0,390,960,70);
+x.fillStyle="rgba(255,255,255,.16)";
+x.fillRect(0,403,960,4);
+x.fillRect(0,430,960,3);
+
+// grass foreground
+x.fillStyle="#6ac464"; x.beginPath();
+x.moveTo(0,460); x.lineTo(960,440); x.lineTo(960,540); x.lineTo(0,540); x.closePath(); x.fill();
+}
+
+function drawFruit(f){
+const yy = f.y + Math.sin(f.bob)*3;
+f.bob += .05;
+x.fillStyle="#ff7a45"; x.beginPath(); x.arc(f.x,yy,f.r,0,Math.PI*2); x.fill();
+x.fillStyle="#2f8a3e"; x.fillRect(f.x-2,yy-f.r-6,4,7);
+x.fillStyle="rgba(255,255,255,.35)"; x.beginPath(); x.arc(f.x-3,yy-3,3,0,Math.PI*2); x.fill();
+}
+
+function drawRock(r){
+x.fillStyle="#7a7f88"; x.beginPath(); x.arc(r.x,r.y,r.r,0,Math.PI*2); x.fill();
+x.fillStyle="rgba(255,255,255,.18)"; x.beginPath(); x.arc(r.x-3,r.y-4,r.r*.35,0,Math.PI*2); x.fill();
+}
+
+function drawCapybara(){
+// shadow
+x.fillStyle="rgba(0,0,0,.2)";
+x.beginPath(); x.ellipse(p.x+p.w/2,p.y+p.h+6,p.w*.45,7,0,0,Math.PI*2); x.fill();
+
+// body
+x.fillStyle="#8b665a"; x.fillRect(p.x,p.y,p.w,p.h);
+x.fillStyle="#795548"; x.fillRect(p.x+p.w-10,p.y+8,23,22);
+x.fillStyle="#5e3f36"; x.fillRect(p.x+8,p.y+p.h-3,10,7); x.fillRect(p.x+p.w-20,p.y+p.h-3,10,7);
+x.fillStyle="#141414"; x.fillRect(p.x+p.w+5,p.y+15,3,3);
+x.fillStyle="rgba(255,255,255,.25)"; x.fillRect(p.x+6,p.y+6,14,4);
+}
+
+function drawHUD(){
+x.fillStyle="rgba(12,18,28,.45)";
+x.fillRect(14,14,250,70);
+x.strokeStyle="rgba(255,255,255,.15)";
+x.strokeRect(14,14,250,70);
+x.fillStyle="#fff";
+x.font="bold 22px Inter, Arial";
+x.fillText("Score: " + score, 26, 43);
+x.fillText("Lives: " + lives, 26, 70);
+}
+
+function drawSparkles(){
+for(let i=sparkles.length-1;i>=0;i--){
+const s=sparkles[i];
+s.x+=s.vx; s.y+=s.vy; s.life--;
+x.globalAlpha=Math.max(0,s.life/28);
+x.fillStyle=s.c; x.fillRect(s.x,s.y,3,3);
+if(s.life<=0) sparkles.splice(i,1);
+}
+x.globalAlpha=1;
 }
 
 function drawScene(){
-x.clearRect(0,0,c.width,c.height);
-
-// Sun
-x.fillStyle = "rgba(255,255,255,.75)";
-x.beginPath();
-x.arc(820, 70, 28, 0, Math.PI*2);
-x.fill();
-
-// River
-x.fillStyle = "#49bff7";
-x.fillRect(0, 380, c.width, 60);
-
-// Fruits
-for(const f of fruits){
-x.fillStyle = "#ff7043";
-x.beginPath();
-x.arc(f.x, f.y, f.r, 0, Math.PI*2);
-x.fill();
-}
-
-// Rocks
-for(const r of rocks){
-x.fillStyle = "#777";
-x.beginPath();
-x.arc(r.x, r.y, r.r, 0, Math.PI*2);
-x.fill();
-}
-
-// Capybara
-x.fillStyle = "#8d6e63";
-x.fillRect(p.x, p.y, p.w, p.h);
-x.fillStyle = "#6d4c41";
-x.fillRect(p.x + p.w - 10, p.y + 8, 20, 20);
-x.fillStyle = "#111";
-x.fillRect(p.x + p.w + 3, p.y + 14, 3, 3);
-
+drawBackground();
+fruits.forEach(drawFruit);
+rocks.forEach(drawRock);
+drawCapybara();
+drawSparkles();
 drawHUD();
 }
 
 function gameLoop(){
 if(!run) return;
 
-let moved = false;
+let moved=false;
+if(keys["ArrowLeft"]||keys["a"]||keys["A"]){ p.x-=p.s; moved=true; }
+if(keys["ArrowRight"]||keys["d"]||keys["D"]){ p.x+=p.s; moved=true; }
+if(keys["ArrowUp"]||keys["w"]||keys["W"]){ p.y-=p.s; moved=true; }
+if(keys["ArrowDown"]||keys["s"]||keys["S"]){ p.y+=p.s; moved=true; }
 
-if(keys["ArrowLeft"] || keys["a"] || keys["A"]){ p.x -= p.s; moved = true; }
-if(keys["ArrowRight"]|| keys["d"] || keys["D"]){ p.x += p.s; moved = true; }
-if(keys["ArrowUp"] || keys["w"] || keys["W"]){ p.y -= p.s; moved = true; }
-if(keys["ArrowDown"] || keys["s"] || keys["S"]){ p.y += p.s; moved = true; }
-
-// touch follow
 if(touchTarget){
-const dx = touchTarget.x - (p.x + p.w/2);
-const dy = touchTarget.y - (p.y + p.h/2);
-p.x += Math.sign(dx) * Math.min(Math.abs(dx), p.s);
-p.y += Math.sign(dy) * Math.min(Math.abs(dy), p.s);
-moved = true;
+const dx=touchTarget.x-(p.x+p.w/2), dy=touchTarget.y-(p.y+p.h/2);
+p.x += Math.sign(dx)*Math.min(Math.abs(dx), p.s);
+p.y += Math.sign(dy)*Math.min(Math.abs(dy), p.s);
+moved=true;
 }
+if(moved) lastMoveAt=Date.now();
 
-if(moved) lastMoveAt = Date.now();
+p.x=Math.max(14,Math.min(960-p.w-14,p.x));
+p.y=Math.max(250,Math.min(540-p.h-14,p.y));
 
-p.x = Math.max(10, Math.min(c.width - p.w - 10, p.x));
-p.y = Math.max(200, Math.min(c.height - p.h - 10, p.y));
-
-// Move rocks
 for(const r of rocks){
-r.x += r.vx; r.y += r.vy;
-if(r.x < 20 || r.x > c.width - 20) r.vx *= -1;
-if(r.y < 200 || r.y > c.height - 20) r.vy *= -1;
+r.x+=r.vx; r.y+=r.vy;
+if(r.x<22||r.x>938) r.vx*=-1;
+if(r.y<265||r.y>520) r.vy*=-1;
 }
 
-// Collect fruits
-for(let i = fruits.length - 1; i >= 0; i--){
-const f = fruits[i];
+for(let i=fruits.length-1;i>=0;i--){
+const f=fruits[i];
 if(hitRectCircle(p.x,p.y,p.w,p.h,f.x,f.y,f.r)){
 score += 10;
-fruits.splice(i,1);
-spawnFruit();
+sparkle(f.x,f.y,"#ffd166");
+fruits.splice(i,1); spawnFruit();
 }
 }
 
-// Hit rocks -> no game over, auto continue
 for(const r of rocks){
 if(hitRectCircle(p.x,p.y,p.w,p.h,r.x,r.y,r.r)){
 lives--;
-p.x = 100; p.y = 360;
-
-if(lives <= 0){
-lives = 3; // auto reset lives, keep game running
-}
+sparkle(p.x+p.w/2,p.y+p.h/2,"#ff6b6b");
+p.x=140; p.y=390;
+if(lives<=0) lives=3; // auto-continue
 break;
 }
 }
@@ -191,45 +226,33 @@ drawScene();
 requestAnimationFrame(gameLoop);
 }
 
-// Idle points loop
-setInterval(() => {
-if(!run) return;
-if(!isTabVisible) return; // hidden tab => no idle points
-
+// idle points
+setInterval(()=>{
+if(!run || !isTabVisible) return;
 score += idlePoint;
-const recentlyActive = (Date.now() - lastMoveAt) < 4000;
-if(recentlyActive) score += activeBonus;
+if(Date.now()-lastMoveAt < 4000) score += activeBonus;
 }, idleTickMs);
 
-// Visibility anti-abuse
-document.addEventListener("visibilitychange", () => {
-isTabVisible = (document.visibilityState === "visible");
-});
+document.addEventListener("visibilitychange",()=>{ isTabVisible = document.visibilityState==="visible"; });
+document.addEventListener("keydown",e=>keys[e.key]=true);
+document.addEventListener("keyup",e=>keys[e.key]=false);
 
-// Keyboard
-document.addEventListener("keydown", e => keys[e.key] = true);
-document.addEventListener("keyup", e => keys[e.key] = false);
-
-// Touch controls
-c.addEventListener("touchstart", (e) => {
+c.addEventListener("touchstart",(e)=>{
 e.preventDefault();
-const t = e.touches[0], rect = c.getBoundingClientRect();
-touchTarget = { x: t.clientX - rect.left, y: t.clientY - rect.top };
-}, { passive:false });
+const t=e.touches[0], r=c.getBoundingClientRect();
+touchTarget={x:t.clientX-r.left,y:t.clientY-r.top};
+},{passive:false});
 
-c.addEventListener("touchmove", (e) => {
+c.addEventListener("touchmove",(e)=>{
 e.preventDefault();
-const t = e.touches[0], rect = c.getBoundingClientRect();
-touchTarget = { x: t.clientX - rect.left, y: t.clientY - rect.top };
-}, { passive:false });
+const t=e.touches[0], r=c.getBoundingClientRect();
+touchTarget={x:t.clientX-r.left,y:t.clientY-r.top};
+},{passive:false});
 
-c.addEventListener("touchend", () => {
-touchTarget = null;
-});
+c.addEventListener("touchend",()=>{ touchTarget=null; });
 
-// Auto start on load
+// auto start
 resetGame();
-run = true;
 drawScene();
 requestAnimationFrame(gameLoop);
 </script>
