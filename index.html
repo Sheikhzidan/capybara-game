@@ -68,7 +68,7 @@ background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
 <body>
 <div class="card">
 <h1 class="title">Capybara Radio Lounge 🐹📻</h1>
-<p class="sub">Now: Lo-fi • Open রাখো, chill করো, points earn করো.</p>
+<p class="sub">Now: Lo-fi • Keep it open, chill, and earn points.</p>
 
 <div class="row">
 <div class="pill">Points: <span id="points">0</span></div>
@@ -81,7 +81,7 @@ background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
 <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
 <div>
 <div style="font-weight:800">Capybara FM</div>
-<div class="muted">Passive points while tab open</div>
+<div class="muted">Passive points while tab stays open</div>
 </div>
 <button id="toggleRadio" class="btn">⏸️ Pause Radio</button>
 </div>
@@ -185,7 +185,7 @@ toggleRadio.textContent = "⏸️ Pause Radio";
 /* ========= Station + theme ========= */
 function setStation(name){
 station = name;
-sub.textContent = `Now: ${station} • Open রাখো, chill করো, points earn করো.`;
+sub.textContent = `Now: ${station} • Keep it open, chill, and earn points.`;
 ui();
 }
 st1.onclick = ()=>setStation("Lo-fi");
