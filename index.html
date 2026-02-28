@@ -4,61 +4,173 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<!-- Play.fun SDK requirements -->
+<!-- Play.fun SDK -->
 <meta name="x-ogp-key" content="d0462b53-483e-409d-a626-41dce5ad6a4d" id="ogp-key-meta" />
 <script src="https://sdk.play.fun"></script>
 
-<title>Mushroom Rush Idle (Play.fun)</title>
+<title>Shroom Bloom Idle</title>
 <style>
 :root{
---bg:#071024; --card:#0f172a; --line:#334155; --text:#f8fafc; --muted:#94a3b8;
---green:#22c55e; --amber:#f59e0b; --red:#ef4444;
+--bg1:#050816;
+--bg2:#0b1430;
+--card1:#0c1b3c;
+--card2:#09142e;
+--line:#35508f;
+--text:#f8fafc;
+--muted:#9fb0d5;
+--green:#22c55e;
+--gold:#f59e0b;
 }
 *{box-sizing:border-box}
 body{
-margin:0; color:var(--text); font-family:Inter,system-ui,Arial,sans-serif;
-background: radial-gradient(circle at 20% 10%, #1d4ed8 0%, var(--bg) 40%, #020617 100%);
+margin:0;
+font-family:Inter,system-ui,Arial,sans-serif;
+color:var(--text);
+background:
+radial-gradient(circle at 20% 0%, #233c8b 0%, var(--bg2) 35%, var(--bg1) 80%),
+linear-gradient(180deg, #020617, #050816);
 min-height:100vh;
 }
-.wrap{max-width:1100px;margin:0 auto;padding:14px;display:grid;grid-template-columns:1.05fr 1fr;gap:12px}
-.card{background:rgba(15,23,42,.82);border:1px solid rgba(148,163,184,.2);border-radius:14px;padding:12px}
+.wrap{
+max-width:1100px;
+margin:0 auto;
+padding:14px;
+display:grid;
+grid-template-columns:1.08fr 1fr;
+gap:12px;
+}
+.card{
+background:linear-gradient(180deg,var(--card1),var(--card2));
+border:1px solid rgba(83,123,220,.45);
+box-shadow:0 12px 32px rgba(0,0,0,.35);
+border-radius:14px;
+padding:12px;
+}
 h1{margin:0;font-size:24px}
 .muted{color:var(--muted);font-size:12px}
-.stats{margin-top:10px;display:grid;grid-template-columns:repeat(2,minmax(120px,1fr));gap:8px}
-.stat{background:#0b1224;border:1px solid rgba(148,163,184,.16);border-radius:10px;padding:8px}
-.stat .k{font-size:12px;color:var(--muted)} .stat .v{font-size:20px;font-weight:800;margin-top:2px}
+.status{
+margin-top:8px;
+font-size:12px;
+color:#dbeafe;
+background:rgba(30,64,175,.18);
+border:1px solid rgba(96,165,250,.35);
+border-radius:8px;
+padding:6px 8px;
+}
+
+.stats{
+margin-top:10px;
+display:grid;
+grid-template-columns:repeat(2,minmax(120px,1fr));
+gap:8px;
+}
+.stat{
+background:#081127;
+border:1px solid rgba(115,151,231,.22);
+border-radius:10px;
+padding:8px;
+}
+.k{font-size:12px;color:var(--muted)}
+.v{font-size:20px;font-weight:800;margin-top:2px}
+
 .tap-zone{
-margin-top:10px;height:330px;border-radius:14px;background:linear-gradient(150deg,#064e3b,#14532d 45%,#052e16);
-border:1px solid rgba(34,197,94,.32);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden
+margin-top:10px;
+height:340px;
+border-radius:14px;
+background:
+radial-gradient(circle at 70% 20%, rgba(16,185,129,.25), transparent 35%),
+linear-gradient(150deg,#064e3b,#14532d 45%,#052e16);
+border:1px solid rgba(34,197,94,.35);
+display:flex;align-items:center;justify-content:center;
+position:relative;overflow:hidden;
 }
+
 .m-btn{
-width:210px;height:210px;border-radius:999px;border:0;cursor:pointer;font-size:62px;color:#fff;
-background:radial-gradient(circle at 30% 25%, #fca5a5 0%, #ef4444 50%, #991b1b 100%);
-box-shadow:0 12px 36px rgba(239,68,68,.45);transition:.08s;user-select:none
+width:220px;height:220px;border-radius:999px;border:0;cursor:pointer;
+font-size:64px;color:#fff;
+background:radial-gradient(circle at 30% 25%, #ffb7c9 0%, #ff4d6d 45%, #a00033 100%);
+box-shadow:0 14px 42px rgba(255,77,109,.45);
+transition:transform .08s ease, filter .2s ease;
+user-select:none;
 }
+.m-btn:hover{filter:brightness(1.06)}
 .m-btn:active{transform:scale(.95)}
-.float{position:absolute;font-weight:800;color:#bbf7d0;pointer-events:none;text-shadow:0 0 12px rgba(34,197,94,.7);animation:up .7s ease-out forwards}
-@keyframes up{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-52px)}}
-.toolbar{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.sbtn{border:1px solid rgba(148,163,184,.2);background:#1e293b;color:#fff;border-radius:8px;padding:7px 10px;cursor:pointer;font-size:12px}
-.shop .row{display:grid;grid-template-columns:1fr auto;gap:8px;border:1px solid rgba(148,163,184,.2);background:#090f1d;border-radius:10px;padding:9px;margin-bottom:8px}
-.name{font-weight:700}.desc{font-size:12px;color:var(--muted)}
-.buy{border:0;border-radius:8px;padding:8px 10px;cursor:pointer;font-weight:700;min-width:96px;background:linear-gradient(180deg,#86efac,#22c55e);color:#052e16}
+
+.float{
+position:absolute;
+font-weight:800;
+color:#bbf7d0;
+text-shadow:0 0 12px rgba(34,197,94,.7);
+pointer-events:none;
+animation:up .7s ease-out forwards;
+}
+@keyframes up{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-54px)}}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.sbtn{
+border:1px solid rgba(130,160,235,.35);
+background:#182c5e;
+color:#fff;
+border-radius:8px;
+padding:7px 10px;
+font-size:12px;
+cursor:pointer;
+}
+
+.shop .row{
+display:grid;
+grid-template-columns:1fr auto;
+gap:8px;
+background:linear-gradient(180deg,#08152f,#060f24);
+border:1px solid rgba(87,132,255,.25);
+border-radius:10px;
+padding:9px;
+margin-bottom:8px;
+}
+.name{font-weight:700}
+.desc{font-size:12px;color:var(--muted)}
+.buy{
+border:0;border-radius:8px;padding:8px 10px;min-width:96px;
+cursor:pointer;font-weight:700;color:#052e16;
+background:linear-gradient(180deg,#4ade80,#16a34a);
+}
 .buy:disabled{opacity:.45;cursor:not-allowed}
-.prestige button{width:100%;border:0;border-radius:10px;padding:10px 12px;cursor:pointer;font-weight:800;background:linear-gradient(180deg,#fcd34d,#f59e0b);color:#3f2a00;margin-top:8px}
-.offline{margin-top:8px;border:1px dashed rgba(245,158,11,.5);background:rgba(245,158,11,.09);border-radius:9px;padding:8px;font-size:13px;display:none}
-.sdk-status{margin-top:8px;font-size:12px;color:#cbd5e1}
-@media (max-width:900px){.wrap{grid-template-columns:1fr}.tap-zone{height:280px}.m-btn{width:176px;height:176px;font-size:52px}h1{font-size:21px}}
+
+.prestige button{
+width:100%;
+border:0;border-radius:10px;padding:10px 12px;
+font-weight:800;cursor:pointer;
+background:linear-gradient(180deg,#fcd34d,#f59e0b);
+color:#3f2a00;
+margin-top:8px;
+}
+
+.offline{
+margin-top:8px;
+border:1px dashed rgba(245,158,11,.55);
+background:rgba(245,158,11,.12);
+border-radius:9px;
+padding:8px;
+font-size:13px;
+display:none;
+}
+
+@media (max-width:900px){
+.wrap{grid-template-columns:1fr}
+.tap-zone{height:280px}
+.m-btn{width:178px;height:178px;font-size:52px}
+h1{font-size:21px}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
 <section class="card">
-<h1>🍄 Mushroom Rush Idle</h1>
-<div class="muted">Tap • Upgrade • Bloom Reset • Play.fun SDK enabled</div>
+<h1>🍄 Shroom Bloom Idle</h1>
+<div class="muted">Tap • Upgrade • Prestige • Reliable Auto Sync</div>
 
+<div id="sdkStatus" class="status">SDK: initializing...</div>
 <div id="offlineBox" class="offline"></div>
-<div id="sdkStatus" class="sdk-status">SDK: Initializing...</div>
 
 <div class="stats">
 <div class="stat"><div class="k">Spores</div><div class="v" id="spores">0</div></div>
@@ -74,7 +186,8 @@ box-shadow:0 12px 36px rgba(239,68,68,.45);transition:.08s;user-select:none
 <div class="toolbar">
 <button class="sbtn" id="soundBtn">🔊 Sound: ON</button>
 <button class="sbtn" id="saveBtn">💾 Save</button>
-<button class="sbtn" id="endRunBtn">🏁 End Run (Send Points)</button>
+<button class="sbtn" id="syncBtn">☁️ Sync Now</button>
+<button class="sbtn" id="endBtn">🏁 End Run</button>
 <button class="sbtn" id="resetBtn">🧹 Reset</button>
 </div>
 </section>
@@ -86,22 +199,24 @@ box-shadow:0 12px 36px rgba(239,68,68,.45);transition:.08s;user-select:none
 </div>
 
 <div class="card prestige" style="margin-top:12px">
-<h3 style="margin:0 0 6px">🌼 Bloom Reset (Prestige)</h3>
-<div class="muted">Unlock at 50,000 spores. Permanent +15% multiplier.</div>
+<h3 style="margin:0 0 6px">🌼 Bloom Reset</h3>
+<div class="muted">Unlock at 50,000 spores. Permanent +15% multiplier each reset.</div>
 <button id="prestigeBtn">Bloom Reset (+15%)</button>
 </div>
 </section>
 </div>
 
 <script>
+/**************** SDK ****************/
+const GAME_ID = "562396db-e86e-4537-b5a3-2a1dbdb39778";
 let ogp = null;
-const GAME_ID = "562396db-e86e-4537-b5a3-2a1dbdb39778"; // your game id
+let pendingPoints = 0;
+let syncInFlight = false;
 
 async function initSDK() {
-const sdkStatus = document.getElementById("sdkStatus");
 try {
 if (typeof OpenGameSDK === "undefined") {
-sdkStatus.textContent = "SDK: Not loaded (check script src)";
+sdkStatus.textContent = "SDK: not loaded (check script tag)";
 return;
 }
 ogp = new OpenGameSDK({
@@ -109,31 +224,55 @@ ui: { usePointsWidget: true, theme: "system" },
 logLevel: "warn"
 });
 await ogp.init({ gameId: GAME_ID });
-sdkStatus.textContent = "SDK: Connected ✅";
-} catch (err) {
-console.error("SDK init failed:", err);
-sdkStatus.textContent = "SDK: Init failed (check OGP key / gameId)";
+sdkStatus.textContent = "SDK: connected ✅";
+} catch (e) {
+console.error(e);
+sdkStatus.textContent = "SDK: init failed (check OGP key / game id)";
 }
 }
 
-async function sendPointsToPlayFun(points) {
+async function safeAddPoints(points) {
+if (!ogp || points <= 0) return false;
+try {
+await ogp.addPoints(Math.floor(points));
+return true;
+} catch (e) {
+console.warn("addPoints failed:", e);
+return false;
+}
+}
+
+async function flushPoints(reason="auto") {
+if (syncInFlight) return;
 if (!ogp) return;
-try { await ogp.addPoints(Math.floor(points)); }
-catch (e) { console.warn("addPoints failed:", e); }
+const pts = Math.floor(pendingPoints);
+if (pts <= 0) return;
+
+syncInFlight = true;
+const ok = await safeAddPoints(pts);
+if (ok) {
+pendingPoints -= pts;
+if (pendingPoints < 0) pendingPoints = 0;
+save();
+sdkStatus.textContent = `SDK: synced ${pts} points (${reason}) ✅`;
+} else {
+sdkStatus.textContent = `SDK: sync retry pending (${reason})`;
+}
+syncInFlight = false;
 }
 
-async function endGameSession(finalPoints) {
+async function endRun() {
+await flushPoints("end-run");
 if (!ogp) return;
 try {
-await ogp.endGame({
-score: Math.floor(finalPoints),
-meta: { mode: "idle", bloom: S.bloom }
-});
+await ogp.endGame({ score: Math.floor(S.spores), meta: { bloom: S.bloom } });
+sdkStatus.textContent = "SDK: run ended ✅";
 } catch (e) {
 console.warn("endGame failed:", e);
 }
 }
 
+/**************** Game ****************/
 const U = [
 {id:"basket",name:"Better Basket",desc:"+1 Tap",base:20,scale:1.20,tap:1,sps:0},
 {id:"soil",name:"Fertile Soil",desc:"+1 / sec",base:35,scale:1.22,tap:0,sps:1},
@@ -149,40 +288,52 @@ const U = [
 {id:"queen",name:"Spore Queen",desc:"+60 / sec",base:15000,scale:1.33,tap:0,sps:60}
 ];
 
-const SAVE_KEY = "mushroomRushPlayfunV1";
-const S = { spores:0, multiplier:1, bloom:0, upgrades:{}, sound:true, lastSeen:Date.now(), pendingPoints:0 };
+const SAVE_KEY = "shroomBloomV3";
+const S = { spores:0, multiplier:1, bloom:0, upgrades:{}, sound:true, lastSeen:Date.now() };
 
-const lvl = id => S.upgrades[id] || 0;
-const cost = u => Math.floor(u.base * Math.pow(u.scale, lvl(u.id)));
+const lvl=id=>S.upgrades[id]||0;
+const cost=u=>Math.floor(u.base*Math.pow(u.scale,lvl(u.id)));
+
 function tapVal(){ let t=1; for(const u of U) t += lvl(u.id)*u.tap; return t*S.multiplier; }
 function spsVal(){ let p=0; for(const u of U) p += lvl(u.id)*u.sps; return p*S.multiplier; }
 
 function nf(n){
 if(n<1000) return Math.floor(n).toString();
-const u=["K","M","B","T","Qa"]; let i=-1;
-while(n>=1000 && i<u.length-1){ n/=1000; i++; }
-return n.toFixed(2)+u[i];
+const units=["K","M","B","T","Qa"]; let i=-1;
+while(n>=1000 && i<units.length-1){n/=1000;i++}
+return n.toFixed(2)+units[i];
 }
 
 let audioCtx=null;
 function beep(freq=700,dur=0.05,vol=0.02){
 if(!S.sound) return;
 try{
-audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
 const o=audioCtx.createOscillator(), g=audioCtx.createGain();
 o.type="triangle"; o.frequency.value=freq; g.gain.value=vol;
 o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+dur);
 }catch{}
 }
 
+function addGamePoints(x){ if(x>0) pendingPoints += x; }
+
 function floatPlus(text,x,y){
 const f=document.createElement("div");
-f.className="float"; f.textContent=text; f.style.left=x+"px"; f.style.top=y+"px";
+f.className="float"; f.textContent=text;
+f.style.left=x+"px"; f.style.top=y+"px";
 zone.appendChild(f); setTimeout(()=>f.remove(),700);
 }
 
-function save(){ S.lastSeen = Date.now(); localStorage.setItem(SAVE_KEY, JSON.stringify(S)); }
-function load(){ const raw=localStorage.getItem(SAVE_KEY); if(!raw) return; try{ Object.assign(S, JSON.parse(raw)); }catch{} }
+function save(){ S.lastSeen=Date.now(); localStorage.setItem(SAVE_KEY, JSON.stringify({...S,pendingPoints})); }
+function load(){
+const raw=localStorage.getItem(SAVE_KEY);
+if(!raw) return;
+try{
+const d=JSON.parse(raw);
+Object.assign(S,d);
+pendingPoints = d.pendingPoints || 0;
+}catch{}
+}
 
 function applyOffline(){
 const now=Date.now();
@@ -191,9 +342,10 @@ if(secs<10) return;
 const capped=Math.min(secs,8*3600);
 const gain=spsVal()*capped;
 if(gain>0){
-S.spores += gain; S.pendingPoints += gain;
+S.spores += gain;
+addGamePoints(gain);
 offlineBox.style.display="block";
-offlineBox.innerHTML=`🕒 Away for <b>${capped}s</b>. Offline gain: <b>${nf(gain)}</b> Spores`;
+offlineBox.innerHTML=`🕒 You were away ${capped}s • Offline +${nf(gain)} spores`;
 }
 }
 
@@ -202,68 +354,77 @@ spores.textContent=nf(S.spores);
 tap.textContent=nf(tapVal());
 sps.textContent=nf(spsVal());
 mult.textContent=S.multiplier.toFixed(2)+"x";
-soundBtn.textContent=S.sound ? "🔊 Sound: ON" : "🔈 Sound: OFF";
+soundBtn.textContent=S.sound ? "🔊 Sound: ON":"🔈 Sound: OFF";
 
 shop.innerHTML="";
 for(const u of U){
 const c=cost(u), l=lvl(u.id);
 const row=document.createElement("div");
 row.className="row";
-row.innerHTML = `<div><div class="name">${u.name} <span class="muted">(Lv ${l})</span></div><div class="desc">${u.desc}</div></div>`;
+row.innerHTML=`<div><div class="name">${u.name} <span class="muted">(Lv ${l})</span></div><div class="desc">${u.desc}</div></div>`;
 const b=document.createElement("button");
 b.className="buy"; b.textContent="Buy "+nf(c); b.disabled=S.spores<c;
-b.onclick=()=>{ if(S.spores<c) return; S.spores-=c; S.upgrades[u.id]=l+1; beep(520,.04,.03); save(); render(); };
+b.onclick=()=>{
+if(S.spores<c) return;
+S.spores-=c; S.upgrades[u.id]=l+1;
+beep(520,.04,.03);
+save(); render();
+};
 row.appendChild(b); shop.appendChild(row);
 }
 
 prestigeBtn.disabled = S.spores < 50000;
-prestigeBtn.style.opacity = prestigeBtn.disabled ? ".5" : "1";
-prestigeBtn.style.cursor = prestigeBtn.disabled ? "not-allowed" : "pointer";
+prestigeBtn.style.opacity = prestigeBtn.disabled ? ".5":"1";
+prestigeBtn.style.cursor = prestigeBtn.disabled ? "not-allowed":"pointer";
 }
 
 tapBtn.addEventListener("click",(e)=>{
 const gain=tapVal();
 S.spores += gain;
-S.pendingPoints += gain;
+addGamePoints(gain);
 const r=zone.getBoundingClientRect();
 floatPlus("+"+Math.floor(gain), e.clientX-r.left, e.clientY-r.top);
-beep(880,.03,.02); render();
+beep(880,.03,.02);
+render();
 });
 
 prestigeBtn.addEventListener("click",()=>{
 if(S.spores<50000) return;
-if(!confirm("Bloom Reset করবে? স্পোর + আপগ্রেড রিসেট হবে.")) return;
+if(!confirm("Bloom Reset? spores + upgrades reset হবে.")) return;
 S.bloom += 1;
-S.multiplier = +(S.multiplier * 1.15).toFixed(4);
-S.spores = 0; S.upgrades = {};
-beep(420,.12,.04); save(); render();
+S.multiplier = +(S.multiplier*1.15).toFixed(4);
+S.spores = 0;
+S.upgrades = {};
+beep(420,.12,.04);
+save(); render();
 alert("Bloom complete! Multiplier: "+S.multiplier.toFixed(2)+"x");
-});
-
-endRunBtn.addEventListener("click", async ()=>{
-const pts = Math.floor(S.pendingPoints);
-if (pts <= 0) return alert("No new points to send yet.");
-await sendPointsToPlayFun(pts);
-await endGameSession(pts);
-S.pendingPoints = 0; save();
-alert("Points sent to Play.fun ✅");
 });
 
 soundBtn.addEventListener("click",()=>{S.sound=!S.sound; save(); render();});
 saveBtn.addEventListener("click",()=>{save(); alert("Saved ✅");});
-resetBtn.addEventListener("click",()=>{ if(!confirm("সব progress reset হবে. Sure?")) return; localStorage.removeItem(SAVE_KEY); location.reload(); });
+syncBtn.addEventListener("click",()=>flushPoints("manual-sync"));
+endBtn.addEventListener("click",endRun);
+resetBtn.addEventListener("click",()=>{
+if(!confirm("সব progress reset হবে. sure?")) return;
+localStorage.removeItem(SAVE_KEY);
+location.reload();
+});
 
-setInterval(()=>{ const g = spsVal(); S.spores += g; S.pendingPoints += g; render(); },1000);
+// game tick
+setInterval(()=>{
+const g=spsVal();
+S.spores += g;
+addGamePoints(g);
+render();
+},1000);
+
+// reliable sync + save
+setInterval(()=>flushPoints("interval"),8000);
 setInterval(save,10000);
-
-setInterval(async ()=>{
-const pts = Math.floor(S.pendingPoints);
-if (pts >= 25) {
-await sendPointsToPlayFun(pts);
-S.pendingPoints = 0;
-save();
-}
-},30000);
+document.addEventListener("visibilitychange",()=>{
+if(document.visibilityState==="hidden"){ flushPoints("hidden"); save(); }
+});
+window.addEventListener("beforeunload",()=>{ flushPoints("unload"); save(); });
 
 (async function boot(){
 load();
