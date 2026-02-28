@@ -5,183 +5,211 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="x-ogp-key" content="d0462b53-483e-409d-a626-41dce5ad6a4d" id="ogp-key-meta" />
 <script src="https://sdk.play.fun"></script>
-<title>Shroom Bloom Compact</title>
+<title>Shroom Bloom - No Scroll</title>
+
 <style>
-:root{
---text:#f8fbff; --muted:#b3c4ea;
---line:rgba(120,160,255,.30);
---panel1:rgba(10,20,48,.72); --panel2:rgba(6,12,30,.82);
---pink:#ff4f96; --pink2:#ff1f6d;
-}
-*{box-sizing:border-box}
-html,body{
-margin:0;
-height:100%;
-overflow:hidden;
-font-family:Inter,system-ui,Arial,sans-serif;
-color:var(--text);
-background:
-radial-gradient(800px 360px at 10% 0%, #274a9d 0%, transparent 60%),
-radial-gradient(700px 340px at 100% 0%, #1e3b7e 0%, transparent 62%),
-linear-gradient(180deg, #050915, #03070f);
+html, body {
+margin: 0;
+height: 100%;
+overflow: hidden;
+font-family: Inter, system-ui, Arial, sans-serif;
+background: #0a1022;
+color: #f8fbff;
 }
 
-#jarvisBg{
-position:fixed; inset:0; z-index:0; opacity:.18; pointer-events:none;
+.wrap {
+height: 100vh;
+max-width: 1180px;
+margin: 0 auto;
+padding: 8px;
+display: grid;
+grid-template-columns: 1.1fr 0.9fr;
+gap: 8px;
 }
 
-.wrap{
-position:relative; z-index:2;
-height:100vh;
-max-width:1140px;
-margin:0 auto;
-padding:10px;
-display:grid;
-grid-template-columns:1.08fr 1fr;
-gap:10px;
+.panel {
+background: #0f1c3f;
+border: 1px solid #233f7a;
+border-radius: 12px;
+padding: 8px;
+box-shadow: 0 6px 18px rgba(0,0,0,.25);
+min-height: 0;
 }
 
-.panel{
-background:linear-gradient(180deg,var(--panel1),var(--panel2));
-border:1px solid var(--line);
-border-radius:12px;
-padding:10px;
-backdrop-filter: blur(8px);
-box-shadow:0 10px 28px rgba(0,0,0,.35);
+h1 { font-size: 18px; margin: 0; }
+.sub { font-size: 11px; color: #9fb2de; margin-top: 2px; }
+
+.status {
+margin-top: 6px;
+font-size: 11px;
+border: 1px solid #355ca7;
+background: #17316a;
+border-radius: 8px;
+padding: 6px 8px;
+color: #eaf1ff;
 }
 
-h1{margin:0;font-size:20px}
-.sub{margin-top:3px;font-size:11px;color:var(--muted)}
-
-.status{
-margin-top:8px;
-font-size:11px;
-border:1px solid rgba(130,170,255,.35);
-background:rgba(30,64,175,.20);
-border-radius:8px;
-padding:6px 8px;
+.offline {
+margin-top: 6px;
+border: 1px dashed #8b6b1f;
+background: #3e2f0c;
+border-radius: 8px;
+padding: 6px 8px;
+font-size: 11px;
+display: none;
+color: #ffe7ad;
 }
 
-.offline{
-margin-top:8px;
-border:1px dashed rgba(245,158,11,.6);
-background:rgba(245,158,11,.13);
-border-radius:8px;
-padding:6px 8px;
-font-size:11px;
-display:none;
+.stats {
+margin-top: 6px;
+display: grid;
+grid-template-columns: repeat(2, minmax(120px, 1fr));
+gap: 6px;
 }
 
-.stats{
-margin-top:8px;
-display:grid;
-grid-template-columns:repeat(2,minmax(120px,1fr));
-gap:8px;
-}
-.stat{
-border:1px solid rgba(120,160,255,.22);
-border-radius:10px;
-background:rgba(8,14,33,.78);
-padding:7px 8px;
-}
-.k{font-size:10px;color:var(--muted)}
-.v{font-size:18px;font-weight:800;margin-top:2px}
-
-.tap-zone{
-margin-top:8px;
-height:clamp(180px,34vh,300px);
-border-radius:12px;
-border:1px solid rgba(34,197,94,.35);
-background:
-radial-gradient(circle at 72% 20%, rgba(34,197,94,.35), transparent 36%),
-linear-gradient(145deg,#0a5b42,#0f6736 45%,#094326);
-display:flex;align-items:center;justify-content:center;
-position:relative;overflow:hidden;
-}
-.ring{
-position:absolute;width:240px;height:240px;border-radius:999px;
-border:2px solid rgba(255,255,255,.12);
-animation:pulse 2.3s infinite ease-in-out;
-pointer-events:none;
-}
-@keyframes pulse{
-0%,100%{transform:scale(1);opacity:.35}
-50%{transform:scale(1.06);opacity:.12}
+.stat {
+background: #0b1530;
+border: 1px solid #233a6f;
+border-radius: 8px;
+padding: 6px 8px;
 }
 
-.m-btn{
-width:clamp(120px,18vw,190px);
-height:clamp(120px,18vw,190px);
-border-radius:999px;border:0;cursor:pointer;
-color:#fff;font-size:clamp(38px,5vw,62px);
-background:radial-gradient(circle at 35% 25%, #ffc2d7 0%, var(--pink) 48%, var(--pink2) 100%);
-box-shadow:0 14px 36px rgba(255,31,109,.42), inset 0 -12px 22px rgba(120,0,40,.25);
-transition:.08s ease; user-select:none;
-}
-.m-btn:active{transform:scale(.94)}
+.k { font-size: 10px; color: #9fb2de; }
+.v { font-size: 16px; font-weight: 700; margin-top: 1px; }
 
-.float{
-position:absolute;font-weight:800;color:#b8ffce;
-text-shadow:0 0 10px rgba(34,197,94,.75);
-pointer-events:none; animation:up .7s ease-out forwards;
-}
-@keyframes up{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-46px)}}
-
-.toolbar{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
-.sbtn{
-border:1px solid rgba(130,170,245,.35);
-background:linear-gradient(180deg,#234a99,#173a80);
-color:#fff;border-radius:8px;padding:6px 9px;font-size:11px;cursor:pointer;
+.tap-zone {
+margin-top: 6px;
+height: min(30vh, 220px);
+border-radius: 10px;
+border: 1px solid #2f8a62;
+background: linear-gradient(145deg, #0e6b5a, #14804b);
+display: flex;
+align-items: center;
+justify-content: center;
+position: relative;
+overflow: hidden;
 }
 
-.shopWrap{
-display:grid;
-grid-template-rows:auto 1fr;
-height:100%;
-min-height:0;
-}
-.shop{
-min-height:0;
-max-height:calc(100vh - 185px);
-overflow:auto;
-padding-right:4px;
-}
-.row{
-display:grid;grid-template-columns:1fr auto;gap:8px;
-background:linear-gradient(180deg,#0b1c42,#071633);
-border:1px solid rgba(113,145,229,.3);
-border-radius:10px;padding:8px;margin-bottom:7px;
-}
-.name{font-weight:700;font-size:13px}
-.desc{font-size:11px;color:var(--muted);margin-top:2px}
-.buy{
-border:0;border-radius:8px;min-width:90px;
-padding:7px 9px;font-size:12px;font-weight:800;cursor:pointer;
-color:#063114;background:linear-gradient(180deg,#6cf3a5,#22c55e);
-}
-.buy:disabled{opacity:.45;cursor:not-allowed}
-
-.prestige-btn{
-width:100%;border:0;border-radius:10px;padding:9px 10px;
-font-size:12px;font-weight:800;cursor:pointer;
-color:#412900;background:linear-gradient(180deg,#fde68a,#f59e0b);
-margin-top:6px;
+.m-btn {
+width: min(21vw, 124px);
+height: min(21vw, 124px);
+border-radius: 999px;
+border: 2px solid #f4f7ff;
+font-size: 40px;
+cursor: pointer;
+background: radial-gradient(circle at 35% 25%, #ffbdd6 0%, #ff4f9c 55%, #ff1f73 100%);
+color: #fff;
+box-shadow: 0 8px 22px rgba(255,45,128,.35);
+transition: transform .08s ease;
+user-select: none;
 }
 
-@media (max-width:940px){
-html,body{overflow:auto}
-.wrap{height:auto;grid-template-columns:1fr}
-.shop{max-height:none;overflow:visible}
+.m-btn:active { transform: scale(.95); }
+
+.float {
+position: absolute;
+font-weight: 800;
+color: #b8ffce;
+text-shadow: 0 0 10px rgba(34,197,94,.75);
+pointer-events: none;
+animation: up .7s ease-out forwards;
+font-size: 14px;
+}
+
+@keyframes up {
+from { opacity: 1; transform: translateY(0); }
+to { opacity: 0; transform: translateY(-46px); }
+}
+
+.toolbar {
+margin-top: 6px;
+display: flex;
+gap: 6px;
+flex-wrap: wrap;
+}
+
+.sbtn {
+font-size: 11px;
+padding: 6px 8px;
+border-radius: 8px;
+border: 1px solid #345aa8;
+background: #1e3d80;
+color: #fff;
+cursor: pointer;
+}
+
+.right-col {
+height: 100%;
+min-height: 0;
+display: grid;
+grid-template-rows: 1fr auto;
+gap: 8px;
+}
+
+.shop {
+min-height: 0;
+max-height: calc(100vh - 24px);
+overflow-y: auto;
+padding-right: 2px;
+}
+
+.row {
+display: grid;
+grid-template-columns: 1fr auto;
+gap: 6px;
+padding: 7px;
+margin-bottom: 6px;
+border-radius: 8px;
+border: 1px solid #2a467f;
+background: #0c1a39;
+}
+
+.name { font-size: 13px; font-weight: 700; }
+.desc { font-size: 11px; color: #9fb2de; }
+
+.buy {
+min-width: 82px;
+font-size: 11px;
+padding: 6px 8px;
+border: 0;
+border-radius: 7px;
+background: linear-gradient(180deg, #72f0a8, #22c55e);
+color: #053217;
+font-weight: 700;
+cursor: pointer;
+}
+
+.buy:disabled { opacity: .45; cursor: not-allowed; }
+
+.prestige-btn {
+width: 100%;
+font-size: 12px;
+padding: 8px 10px;
+border: 0;
+border-radius: 8px;
+font-weight: 800;
+background: linear-gradient(180deg, #fde68a, #f59e0b);
+color: #3f2a00;
+cursor: pointer;
+}
+
+@media (max-width: 900px) {
+html, body { overflow: auto; }
+.wrap {
+height: auto;
+grid-template-columns: 1fr;
+}
+.shop { max-height: none; overflow: visible; }
+.m-btn { width: 120px; height: 120px; font-size: 38px; }
 }
 </style>
 </head>
 <body>
-<canvas id="jarvisBg"></canvas>
-
 <div class="wrap">
+<!-- Left -->
 <section class="panel">
-<h1>🍄 Shroom Bloom Compact</h1>
-<div class="sub">No-scroll desktop layout + smooth sync</div>
+<h1>🍄 Shroom Bloom</h1>
+<div class="sub">Compact clean layout (no desktop page scroll)</div>
 
 <div id="sdkStatus" class="status">SDK: initializing...</div>
 <div id="offlineBox" class="offline"></div>
@@ -194,7 +222,6 @@ html,body{overflow:auto}
 </div>
 
 <div class="tap-zone" id="zone">
-<div class="ring"></div>
 <button id="tapBtn" class="m-btn">🍄</button>
 </div>
 
@@ -207,13 +234,14 @@ html,body{overflow:auto}
 </div>
 </section>
 
-<section class="shopWrap">
+<!-- Right -->
+<section class="right-col">
 <div class="panel">
 <h3 style="margin:0 0 8px;font-size:16px">🛒 Upgrades</h3>
 <div id="shop" class="shop"></div>
 </div>
 
-<div class="panel" style="margin-top:10px">
+<div class="panel">
 <h3 style="margin:0 0 4px;font-size:16px">🌼 Bloom Reset</h3>
 <div class="sub">Unlock at 50,000 spores (+15% permanent)</div>
 <button id="prestigeBtn" class="prestige-btn">Bloom Reset (+15%)</button>
@@ -222,81 +250,75 @@ html,body{overflow:auto}
 </div>
 
 <script>
-/* Jarvis background */
-const bg = document.getElementById("jarvisBg");
-const ctx = bg.getContext("2d");
-let W,H,cols,drops;
-const chars = "01<>[]{}()/\\*=+-_#$%&ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-function rs(){
-W=bg.width=window.innerWidth;
-H=bg.height=window.innerHeight;
-cols=Math.floor(W/16);
-drops=Array(cols).fill(0).map(()=>Math.random()*H/16);
-}
-function dr(){
-ctx.fillStyle="rgba(4,7,20,0.08)";
-ctx.fillRect(0,0,W,H);
-ctx.fillStyle="rgba(84,225,145,0.72)";
-ctx.font="14px monospace";
-for(let i=0;i<drops.length;i++){
-const t=chars[Math.floor(Math.random()*chars.length)];
-const x=i*16,y=drops[i]*16;
-ctx.fillText(t,x,y);
-if(y>H && Math.random()>0.975) drops[i]=0;
-drops[i]++;
-}
-requestAnimationFrame(dr);
-}
-rs();dr();window.addEventListener("resize",rs);
-
-/* SDK */
+// Play.fun
 const GAME_ID = "562396db-e86e-4537-b5a3-2a1dbdb39778";
-let ogp=null,pendingPoints=0,syncInFlight=false;
+let ogp = null;
+let pendingPoints = 0;
+let syncInFlight = false;
 
 async function initSDK(){
 try{
-if(typeof OpenGameSDK==="undefined"){
-sdkStatus.textContent="SDK: not loaded";
+if(typeof OpenGameSDK === "undefined"){
+sdkStatus.textContent = "SDK: not loaded";
 return;
 }
-ogp=new OpenGameSDK({ui:{usePointsWidget:true,theme:"system"},logLevel:"warn"});
-await ogp.init({gameId:GAME_ID});
-sdkStatus.textContent="SDK: connected ✅";
+ogp = new OpenGameSDK({
+ui: { usePointsWidget: true, theme: "system" },
+logLevel: "warn"
+});
+await ogp.init({ gameId: GAME_ID });
+sdkStatus.textContent = "SDK: connected ✅";
 }catch(e){
-console.error("SDK init failed:",e);
-sdkStatus.textContent="SDK init failed: "+(e?.message||"unknown");
+console.error("SDK init failed:", e);
+sdkStatus.textContent = "SDK init failed: " + (e?.message || "unknown");
 }
 }
-async function safeAddPoints(p){
-if(!ogp||p<=0) return false;
-try{ await ogp.addPoints(Math.floor(p)); return true; }catch(e){ console.warn(e); return false; }
+
+async function safeAddPoints(points){
+if(!ogp || points <= 0) return false;
+try{
+await ogp.addPoints(Math.floor(points));
+return true;
+}catch(e){
+console.warn("addPoints failed:", e);
+return false;
 }
+}
+
 async function flushPoints(reason="auto"){
-if(syncInFlight||!ogp) return;
-const pts=Math.floor(pendingPoints);
-if(pts<=0) return;
-syncInFlight=true;
-const ok=await safeAddPoints(pts);
+if(syncInFlight || !ogp) return;
+const pts = Math.floor(pendingPoints);
+if(pts <= 0) return;
+
+syncInFlight = true;
+const ok = await safeAddPoints(pts);
 if(ok){
-pendingPoints-=pts; if(pendingPoints<0) pendingPoints=0;
+pendingPoints -= pts;
+if(pendingPoints < 0) pendingPoints = 0;
 save();
-sdkStatus.textContent=`SDK: synced ${pts} (${reason}) ✅`;
+sdkStatus.textContent = `SDK: synced ${pts} (${reason}) ✅`;
 }else{
-sdkStatus.textContent=`SDK: sync pending (${reason})`;
+sdkStatus.textContent = `SDK: sync pending (${reason})`;
 }
-syncInFlight=false;
+syncInFlight = false;
 }
+
 async function endRun(){
 await flushPoints("end-run");
 if(!ogp) return;
 try{
-await ogp.endGame({score:Math.floor(S.spores),meta:{bloom:S.bloom}});
-sdkStatus.textContent="SDK: endGame sent ✅";
-}catch(e){console.warn(e);}
+await ogp.endGame({
+score: Math.floor(S.spores),
+meta: { bloom: S.bloom }
+});
+sdkStatus.textContent = "SDK: endGame sent ✅";
+}catch(e){
+console.warn("endGame failed:", e);
+}
 }
 
-/* Game */
-const U=[
+// Game data
+const U = [
 {id:"basket",name:"Better Basket",desc:"+1 Tap",base:20,scale:1.20,tap:1,sps:0},
 {id:"soil",name:"Fertile Soil",desc:"+1 / sec",base:35,scale:1.22,tap:0,sps:1},
 {id:"pump",name:"Water Pump",desc:"+2 / sec",base:80,scale:1.23,tap:0,sps:2},
@@ -310,110 +332,197 @@ const U=[
 {id:"mutation",name:"Mutation Chamber",desc:"+15 Tap, +20 / sec",base:9200,scale:1.31,tap:15,sps:20},
 {id:"queen",name:"Spore Queen",desc:"+60 / sec",base:15000,scale:1.33,tap:0,sps:60}
 ];
-const SAVE_KEY="shroomCompactV1";
-const S={spores:0,multiplier:1,bloom:0,upgrades:{},sound:true,lastSeen:Date.now()};
 
-const lvl=id=>S.upgrades[id]||0;
-const cost=u=>Math.floor(u.base*Math.pow(u.scale,lvl(u.id)));
-function tapVal(){let t=1;for(const u of U)t+=lvl(u.id)*u.tap;return t*S.multiplier;}
-function spsVal(){let p=0;for(const u of U)p+=lvl(u.id)*u.sps;return p*S.multiplier;}
-function nf(n){if(n<1000)return Math.floor(n).toString();const u=["K","M","B","T","Qa"];let i=-1;while(n>=1000&&i<u.length-1){n/=1000;i++;}return n.toFixed(2)+u[i];}
+const SAVE_KEY = "shroomNoScrollV1";
+const S = {
+spores: 0,
+multiplier: 1,
+bloom: 0,
+upgrades: {},
+sound: true,
+lastSeen: Date.now()
+};
 
-let audioCtx=null;
-function beep(freq=700,d=0.05,v=0.02){
+const lvl = id => S.upgrades[id] || 0;
+const cost = u => Math.floor(u.base * Math.pow(u.scale, lvl(u.id)));
+
+function tapVal(){
+let t = 1;
+for(const u of U) t += lvl(u.id) * u.tap;
+return t * S.multiplier;
+}
+
+function spsVal(){
+let p = 0;
+for(const u of U) p += lvl(u.id) * u.sps;
+return p * S.multiplier;
+}
+
+function nf(n){
+if(n < 1000) return Math.floor(n).toString();
+const u = ["K","M","B","T","Qa"];
+let i = -1;
+while(n >= 1000 && i < u.length - 1){ n /= 1000; i++; }
+return n.toFixed(2) + u[i];
+}
+
+let audioCtx = null;
+function beep(freq=700, d=0.05, v=0.02){
 if(!S.sound) return;
 try{
-audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
-const o=audioCtx.createOscillator(),g=audioCtx.createGain();
-o.type="triangle";o.frequency.value=freq;g.gain.value=v;
-o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+d);
+audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+o.type = "triangle";
+o.frequency.value = freq;
+g.gain.value = v;
+o.connect(g); g.connect(audioCtx.destination);
+o.start(); o.stop(audioCtx.currentTime + d);
 }catch{}
 }
-function addPts(x){ if(x>0) pendingPoints+=x; }
+
+function addPts(x){ if(x > 0) pendingPoints += x; }
 
 function floatPlus(text,x,y){
-const f=document.createElement("div");
-f.className="float";f.textContent=text;f.style.left=x+"px";f.style.top=y+"px";
-zone.appendChild(f);setTimeout(()=>f.remove(),700);
+const f = document.createElement("div");
+f.className = "float";
+f.textContent = text;
+f.style.left = x + "px";
+f.style.top = y + "px";
+zone.appendChild(f);
+setTimeout(()=>f.remove(),700);
 }
 
 function save(){
-S.lastSeen=Date.now();
-localStorage.setItem(SAVE_KEY,JSON.stringify({...S,pendingPoints}));
+S.lastSeen = Date.now();
+localStorage.setItem(SAVE_KEY, JSON.stringify({ ...S, pendingPoints }));
 }
+
 function load(){
-const raw=localStorage.getItem(SAVE_KEY);
+const raw = localStorage.getItem(SAVE_KEY);
 if(!raw) return;
-try{const d=JSON.parse(raw);Object.assign(S,d);pendingPoints=d.pendingPoints||0;}catch{}
+try{
+const d = JSON.parse(raw);
+Object.assign(S, d);
+pendingPoints = d.pendingPoints || 0;
+}catch{}
 }
+
 function offline(){
-const now=Date.now();
-const secs=Math.max(0,Math.floor((now-(S.lastSeen||now))/1000));
-if(secs<10) return;
-const capped=Math.min(secs,8*3600);
-const gain=spsVal()*capped;
-if(gain>0){
-S.spores+=gain;addPts(gain);
-offlineBox.style.display="block";
-offlineBox.innerHTML=`🕒 Offline ${capped}s • +${nf(gain)} spores`;
+const now = Date.now();
+const secs = Math.max(0, Math.floor((now - (S.lastSeen || now))/1000));
+if(secs < 10) return;
+const capped = Math.min(secs, 8*3600);
+const gain = spsVal() * capped;
+if(gain > 0){
+S.spores += gain;
+addPts(gain);
+offlineBox.style.display = "block";
+offlineBox.innerHTML = `🕒 Offline ${capped}s • +${nf(gain)} spores`;
 }
 }
 
 function render(){
-spores.textContent=nf(S.spores);
-tap.textContent=nf(tapVal());
-sps.textContent=nf(spsVal());
-mult.textContent=S.multiplier.toFixed(2)+"x";
-soundBtn.textContent=S.sound?"🔊 Sound ON":"🔈 Sound OFF";
+spores.textContent = nf(S.spores);
+tap.textContent = nf(tapVal());
+sps.textContent = nf(spsVal());
+mult.textContent = S.multiplier.toFixed(2) + "x";
+soundBtn.textContent = S.sound ? "🔊 Sound ON" : "🔈 Sound OFF";
 
-shop.innerHTML="";
+shop.innerHTML = "";
 for(const u of U){
-const c=cost(u),l=lvl(u.id);
-const row=document.createElement("div");
-row.className="row";
-row.innerHTML=`<div><div class="name">${u.name} <span style="font-size:11px;color:#9fb3df">(Lv ${l})</span></div><div class="desc">${u.desc}</div></div>`;
-const b=document.createElement("button");
-b.className="buy";b.textContent="Buy "+nf(c);b.disabled=S.spores<c;
-b.onclick=()=>{if(S.spores<c)return;S.spores-=c;S.upgrades[u.id]=l+1;beep(520,.04,.03);save();render();};
-row.appendChild(b);shop.appendChild(row);
+const c = cost(u), l = lvl(u.id);
+const row = document.createElement("div");
+row.className = "row";
+row.innerHTML = `<div>
+<div class="name">${u.name} <span style="font-size:11px;color:#9fb3df">(Lv ${l})</span></div>
+<div class="desc">${u.desc}</div>
+</div>`;
+
+const b = document.createElement("button");
+b.className = "buy";
+b.textContent = "Buy " + nf(c);
+b.disabled = S.spores < c;
+b.onclick = ()=>{
+if(S.spores < c) return;
+S.spores -= c;
+S.upgrades[u.id] = l + 1;
+beep(520,.04,.03);
+save();
+render();
+};
+
+row.appendChild(b);
+shop.appendChild(row);
 }
 
-prestigeBtn.disabled=S.spores<50000;
-prestigeBtn.style.opacity=prestigeBtn.disabled?".5":"1";
-prestigeBtn.style.cursor=prestigeBtn.disabled?"not-allowed":"pointer";
+prestigeBtn.disabled = S.spores < 50000;
+prestigeBtn.style.opacity = prestigeBtn.disabled ? ".5" : "1";
+prestigeBtn.style.cursor = prestigeBtn.disabled ? "not-allowed" : "pointer";
 }
+
 tapBtn.addEventListener("click",(e)=>{
-const gain=tapVal();
-S.spores+=gain;addPts(gain);
-const r=zone.getBoundingClientRect();
-floatPlus("+"+Math.floor(gain),e.clientX-r.left,e.clientY-r.top);
-beep(880,.03,.02);render();
+const gain = tapVal();
+S.spores += gain;
+addPts(gain);
+
+const r = zone.getBoundingClientRect();
+floatPlus("+" + Math.floor(gain), e.clientX - r.left, e.clientY - r.top);
+
+beep(880,.03,.02);
+render();
 });
 
 prestigeBtn.addEventListener("click",()=>{
-if(S.spores<50000) return;
+if(S.spores < 50000) return;
 if(!confirm("Bloom Reset? progress reset হবে.")) return;
-S.bloom+=1;S.multiplier=+(S.multiplier*1.15).toFixed(4);S.spores=0;S.upgrades={};
-beep(430,.12,.04);save();render();
-alert("Bloom complete! "+S.multiplier.toFixed(2)+"x");
+
+S.bloom += 1;
+S.multiplier = +(S.multiplier * 1.15).toFixed(4);
+S.spores = 0;
+S.upgrades = {};
+beep(430,.12,.04);
+save();
+render();
+alert("Bloom complete! " + S.multiplier.toFixed(2) + "x");
 });
 
-soundBtn.addEventListener("click",()=>{S.sound=!S.sound;save();render();});
-saveBtn.addEventListener("click",()=>{save();alert("Saved ✅");});
+soundBtn.addEventListener("click",()=>{ S.sound = !S.sound; save(); render(); });
+saveBtn.addEventListener("click",()=>{ save(); alert("Saved ✅"); });
 syncBtn.addEventListener("click",()=>flushPoints("manual"));
 endBtn.addEventListener("click",endRun);
-resetBtn.addEventListener("click",()=>{if(!confirm("সব reset হবে, sure?"))return;localStorage.removeItem(SAVE_KEY);location.reload();});
+resetBtn.addEventListener("click",()=>{
+if(!confirm("সব reset হবে, sure?")) return;
+localStorage.removeItem(SAVE_KEY);
+location.reload();
+});
 
-setInterval(()=>{const g=spsVal();S.spores+=g;addPts(g);render();},1000);
+setInterval(()=>{
+const g = spsVal();
+S.spores += g;
+addPts(g);
+render();
+},1000);
+
 setInterval(()=>flushPoints("interval"),5000);
 setInterval(save,10000);
 setInterval(()=>endRun(),60000);
+document.addEventListener("visibilitychange",()=>{
+if(document.visibilityState === "hidden"){
+flushPoints("hidden");
+save();
+}
+});
 
-document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden"){flushPoints("hidden");save();}});
-window.addEventListener("beforeunload",()=>{flushPoints("unload");save();});
+window.addEventListener("beforeunload",()=>{
+flushPoints("unload");
+save();
+});
 
 (async function boot(){
-load();offline();render();await initSDK();
+load();
+offline();
+render();
+await initSDK();
 })();
 </script>
 </body>
