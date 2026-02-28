@@ -3,310 +3,274 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="x-ogp-key" content="d0462b53-483e-409d-a626-41dce5ad6a4d" />
+
+<!-- Play.fun SDK requirements -->
+<meta name="x-ogp-key" content="d0462b53-483e-409d-a626-41dce5ad6a4d" id="ogp-key-meta" />
 <script src="https://sdk.play.fun"></script>
-<title>Capybara Radio Lounge Pro</title>
+
+<title>Mushroom Rush Idle (Play.fun)</title>
 <style>
+:root{
+--bg:#071024; --card:#0f172a; --line:#334155; --text:#f8fafc; --muted:#94a3b8;
+--green:#22c55e; --amber:#f59e0b; --red:#ef4444;
+}
 *{box-sizing:border-box}
 body{
-margin:0; min-height:100vh; color:#fff;
-font-family:Inter,Arial,sans-serif;
-background: radial-gradient(circle at 20% 20%, #1e3454 0%, #0f1d33 55%, #0a1324 100%);
-display:grid; place-items:center; padding:16px;
-transition: background .3s ease;
+margin:0; color:var(--text); font-family:Inter,system-ui,Arial,sans-serif;
+background: radial-gradient(circle at 20% 10%, #1d4ed8 0%, var(--bg) 40%, #020617 100%);
+min-height:100vh;
 }
-.card{
-width:min(760px, 96vw);
-background:rgba(10,18,32,.45);
-border:1px solid rgba(255,255,255,.14);
-border-radius:18px;
-box-shadow:0 20px 60px rgba(0,0,0,.45);
-padding:18px;
-backdrop-filter: blur(4px);
+.wrap{max-width:1100px;margin:0 auto;padding:14px;display:grid;grid-template-columns:1.05fr 1fr;gap:12px}
+.card{background:rgba(15,23,42,.82);border:1px solid rgba(148,163,184,.2);border-radius:14px;padding:12px}
+h1{margin:0;font-size:24px}
+.muted{color:var(--muted);font-size:12px}
+.stats{margin-top:10px;display:grid;grid-template-columns:repeat(2,minmax(120px,1fr));gap:8px}
+.stat{background:#0b1224;border:1px solid rgba(148,163,184,.16);border-radius:10px;padding:8px}
+.stat .k{font-size:12px;color:var(--muted)} .stat .v{font-size:20px;font-weight:800;margin-top:2px}
+.tap-zone{
+margin-top:10px;height:330px;border-radius:14px;background:linear-gradient(150deg,#064e3b,#14532d 45%,#052e16);
+border:1px solid rgba(34,197,94,.32);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden
 }
-.title{font-size:28px;font-weight:800;margin:0 0 6px}
-.sub{opacity:.8;margin:0 0 14px}
-.row{display:flex;gap:12px;flex-wrap:wrap}
-.pill{
-background:rgba(255,255,255,.08);
-border:1px solid rgba(255,255,255,.12);
-border-radius:12px;
-padding:10px 12px;
-min-width:145px;
-font-weight:700;
+.m-btn{
+width:210px;height:210px;border-radius:999px;border:0;cursor:pointer;font-size:62px;color:#fff;
+background:radial-gradient(circle at 30% 25%, #fca5a5 0%, #ef4444 50%, #991b1b 100%);
+box-shadow:0 12px 36px rgba(239,68,68,.45);transition:.08s;user-select:none
 }
-.radio{
-margin-top:14px;
-background:linear-gradient(135deg,#243b5c,#1a2942);
-border:1px solid rgba(255,255,255,.14);
-border-radius:16px;
-padding:14px;
-}
-.btn{
-border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;
-background:#ffd84d;color:#111;
-}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.muted{opacity:.75;font-size:13px}
-.task{
-margin-top:14px;
-background:rgba(255,255,255,.06);
-border:1px dashed rgba(255,255,255,.25);
-border-radius:12px;
-padding:12px;
-}
-.bar{
-margin-top:8px;height:8px;border-radius:999px;background:rgba(255,255,255,.15);overflow:hidden
-}
-.fill{height:100%;width:0%;background:#7df9a6;transition:width .2s}
-#viz{
-margin-top:10px;width:100%;height:auto;border-radius:10px;
-background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-}
+.m-btn:active{transform:scale(.95)}
+.float{position:absolute;font-weight:800;color:#bbf7d0;pointer-events:none;text-shadow:0 0 12px rgba(34,197,94,.7);animation:up .7s ease-out forwards}
+@keyframes up{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-52px)}}
+.toolbar{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.sbtn{border:1px solid rgba(148,163,184,.2);background:#1e293b;color:#fff;border-radius:8px;padding:7px 10px;cursor:pointer;font-size:12px}
+.shop .row{display:grid;grid-template-columns:1fr auto;gap:8px;border:1px solid rgba(148,163,184,.2);background:#090f1d;border-radius:10px;padding:9px;margin-bottom:8px}
+.name{font-weight:700}.desc{font-size:12px;color:var(--muted)}
+.buy{border:0;border-radius:8px;padding:8px 10px;cursor:pointer;font-weight:700;min-width:96px;background:linear-gradient(180deg,#86efac,#22c55e);color:#052e16}
+.buy:disabled{opacity:.45;cursor:not-allowed}
+.prestige button{width:100%;border:0;border-radius:10px;padding:10px 12px;cursor:pointer;font-weight:800;background:linear-gradient(180deg,#fcd34d,#f59e0b);color:#3f2a00;margin-top:8px}
+.offline{margin-top:8px;border:1px dashed rgba(245,158,11,.5);background:rgba(245,158,11,.09);border-radius:9px;padding:8px;font-size:13px;display:none}
+.sdk-status{margin-top:8px;font-size:12px;color:#cbd5e1}
+@media (max-width:900px){.wrap{grid-template-columns:1fr}.tap-zone{height:280px}.m-btn{width:176px;height:176px;font-size:52px}h1{font-size:21px}}
 </style>
 </head>
 <body>
-<div class="card">
-<h1 class="title">Capybara Radio Lounge 🐹📻</h1>
-<p class="sub">Now: Lo-fi • Keep it open, chill, and earn points.</p>
+<div class="wrap">
+<section class="card">
+<h1>🍄 Mushroom Rush Idle</h1>
+<div class="muted">Tap • Upgrade • Bloom Reset • Play.fun SDK enabled</div>
 
-<div class="row">
-<div class="pill">Points: <span id="points">0</span></div>
-<div class="pill">Streak: <span id="streak">1</span></div>
-<div class="pill">Hourly Chest: <span id="chest">60m</span></div>
-<div class="pill">Station: <span id="stationName">Lo-fi</span></div>
-</div>
+<div id="offlineBox" class="offline"></div>
+<div id="sdkStatus" class="sdk-status">SDK: Initializing...</div>
 
-<div class="radio">
-<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-<div>
-<div style="font-weight:800">Capybara FM</div>
-<div class="muted">Passive points while tab stays open</div>
-</div>
-<button id="toggleRadio" class="btn">⏸️ Pause Radio</button>
+<div class="stats">
+<div class="stat"><div class="k">Spores</div><div class="v" id="spores">0</div></div>
+<div class="stat"><div class="k">Spores / Tap</div><div class="v" id="tap">1</div></div>
+<div class="stat"><div class="k">Spores / Sec</div><div class="v" id="sps">0</div></div>
+<div class="stat"><div class="k">Bloom Multiplier</div><div class="v" id="mult">1.00x</div></div>
 </div>
 
-<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-<button id="st1" class="btn">Lo-fi</button>
-<button id="st2" class="btn">Rain</button>
-<button id="st3" class="btn">Cafe</button>
-<button id="nightBtn" class="btn">🌙 Night</button>
+<div class="tap-zone" id="zone">
+<button id="tapBtn" class="m-btn" aria-label="Harvest">🍄</button>
 </div>
 
-<canvas id="viz" width="700" height="80"></canvas>
+<div class="toolbar">
+<button class="sbtn" id="soundBtn">🔊 Sound: ON</button>
+<button class="sbtn" id="saveBtn">💾 Save</button>
+<button class="sbtn" id="endRunBtn">🏁 End Run (Send Points)</button>
+<button class="sbtn" id="resetBtn">🧹 Reset</button>
+</div>
+</section>
+
+<section>
+<div class="card shop">
+<h3 style="margin:0 0 8px">🛒 Upgrades</h3>
+<div id="shop"></div>
 </div>
 
-<div class="task">
-<div style="font-weight:700">Bonus Task: Tap 10 times in 20s → +3 points</div>
-<div class="muted" id="taskState">Task starts in 60s</div>
-<div class="bar"><div id="taskFill" class="fill"></div></div>
-<div style="margin-top:8px"><button id="tapBtn" class="btn" disabled>Tap</button></div>
+<div class="card prestige" style="margin-top:12px">
+<h3 style="margin:0 0 6px">🌼 Bloom Reset (Prestige)</h3>
+<div class="muted">Unlock at 50,000 spores. Permanent +15% multiplier.</div>
+<button id="prestigeBtn">Bloom Reset (+15%)</button>
 </div>
+</section>
 </div>
 
 <script>
-/* ========= SDK ========= */
-const GAME_ID = "562396db-e86e-4537-b5a3-2a1dbdb39778";
-const ogp = new OpenGameSDK({
-ui: { usePointsWidget: true, theme: "dark" },
+let ogp = null;
+const GAME_ID = "562396db-e86e-4537-b5a3-2a1dbdb39778"; // your game id
+
+async function initSDK() {
+const sdkStatus = document.getElementById("sdkStatus");
+try {
+if (typeof OpenGameSDK === "undefined") {
+sdkStatus.textContent = "SDK: Not loaded (check script src)";
+return;
+}
+ogp = new OpenGameSDK({
+ui: { usePointsWidget: true, theme: "system" },
 logLevel: "warn"
 });
-let sdkReady = false;
-ogp.on("OnReady", () => { sdkReady = true; });
-ogp.init({ gameId: GAME_ID });
-
-function addPointsSDK(n){
-if (!sdkReady || n <= 0) return;
-try { ogp.addPoints(n); } catch {}
+await ogp.init({ gameId: GAME_ID });
+sdkStatus.textContent = "SDK: Connected ✅";
+} catch (err) {
+console.error("SDK init failed:", err);
+sdkStatus.textContent = "SDK: Init failed (check OGP key / gameId)";
 }
-async function commitPoints(){
-if (!sdkReady) return;
-try { await ogp.endGame(); } catch {}
 }
 
-/* ========= UI refs ========= */
-const pointsEl = document.getElementById("points");
-const streakEl = document.getElementById("streak");
-const chestEl = document.getElementById("chest");
-const stationNameEl = document.getElementById("stationName");
-const toggleRadio = document.getElementById("toggleRadio");
-const tapBtn = document.getElementById("tapBtn");
-const taskState = document.getElementById("taskState");
-const taskFill = document.getElementById("taskFill");
-const st1 = document.getElementById("st1");
-const st2 = document.getElementById("st2");
-const st3 = document.getElementById("st3");
-const nightBtn = document.getElementById("nightBtn");
-const sub = document.querySelector(".sub");
-const viz = document.getElementById("viz");
-const vz = viz.getContext("2d");
-
-/* ========= State ========= */
-let points = Number(localStorage.getItem("cr_points") || 0);
-let streak = Number(localStorage.getItem("cr_streak") || 1);
-let chestMinutes = Number(localStorage.getItem("cr_chest_min") || 60);
-let isVisible = document.visibilityState === "visible";
-let radioOn = true; // AUTO ON
-let station = "Lo-fi";
-let night = false;
-
-// bonus task
-let taskActive = false;
-let taskTapCount = 0;
-let taskLeft = 0;
-const TASK_NEED = 10;
-const TASK_SECONDS = 20;
-
-/* ========= Daily streak ========= */
-(function applyDailyStreak(){
-const today = new Date().toDateString();
-const key = "cr_last_day";
-const last = localStorage.getItem(key);
-if (last !== today) {
-streak = Math.min(streak + 1, 30);
-localStorage.setItem("cr_streak", String(streak));
-localStorage.setItem(key, today);
-
-const bonus = streak * 5;
-points += bonus;
-addPointsSDK(bonus);
+async function sendPointsToPlayFun(points) {
+if (!ogp) return;
+try { await ogp.addPoints(Math.floor(points)); }
+catch (e) { console.warn("addPoints failed:", e); }
 }
+
+async function endGameSession(finalPoints) {
+if (!ogp) return;
+try {
+await ogp.endGame({
+score: Math.floor(finalPoints),
+meta: { mode: "idle", bloom: S.bloom }
+});
+} catch (e) {
+console.warn("endGame failed:", e);
+}
+}
+
+const U = [
+{id:"basket",name:"Better Basket",desc:"+1 Tap",base:20,scale:1.20,tap:1,sps:0},
+{id:"soil",name:"Fertile Soil",desc:"+1 / sec",base:35,scale:1.22,tap:0,sps:1},
+{id:"pump",name:"Water Pump",desc:"+2 / sec",base:80,scale:1.23,tap:0,sps:2},
+{id:"sickle",name:"Sharp Sickle",desc:"+3 Tap",base:150,scale:1.24,tap:3,sps:0},
+{id:"compost",name:"Compost Lab",desc:"+4 / sec",base:300,scale:1.25,tap:0,sps:4},
+{id:"lamp",name:"Glow Lamp",desc:"+5 Tap",base:520,scale:1.26,tap:5,sps:0},
+{id:"mycelium",name:"Mycelium Network",desc:"+8 / sec",base:900,scale:1.27,tap:0,sps:8},
+{id:"drone",name:"Drone Harvester",desc:"+14 / sec",base:1700,scale:1.28,tap:0,sps:14},
+{id:"gold",name:"Golden Spores",desc:"+10 Tap",base:2800,scale:1.29,tap:10,sps:0},
+{id:"reactor",name:"Forest Reactor",desc:"+25 / sec",base:5200,scale:1.30,tap:0,sps:25},
+{id:"mutation",name:"Mutation Chamber",desc:"+15 Tap, +20 / sec",base:9200,scale:1.31,tap:15,sps:20},
+{id:"queen",name:"Spore Queen",desc:"+60 / sec",base:15000,scale:1.33,tap:0,sps:60}
+];
+
+const SAVE_KEY = "mushroomRushPlayfunV1";
+const S = { spores:0, multiplier:1, bloom:0, upgrades:{}, sound:true, lastSeen:Date.now(), pendingPoints:0 };
+
+const lvl = id => S.upgrades[id] || 0;
+const cost = u => Math.floor(u.base * Math.pow(u.scale, lvl(u.id)));
+function tapVal(){ let t=1; for(const u of U) t += lvl(u.id)*u.tap; return t*S.multiplier; }
+function spsVal(){ let p=0; for(const u of U) p += lvl(u.id)*u.sps; return p*S.multiplier; }
+
+function nf(n){
+if(n<1000) return Math.floor(n).toString();
+const u=["K","M","B","T","Qa"]; let i=-1;
+while(n>=1000 && i<u.length-1){ n/=1000; i++; }
+return n.toFixed(2)+u[i];
+}
+
+let audioCtx=null;
+function beep(freq=700,dur=0.05,vol=0.02){
+if(!S.sound) return;
+try{
+audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+o.type="triangle"; o.frequency.value=freq; g.gain.value=vol;
+o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+dur);
+}catch{}
+}
+
+function floatPlus(text,x,y){
+const f=document.createElement("div");
+f.className="float"; f.textContent=text; f.style.left=x+"px"; f.style.top=y+"px";
+zone.appendChild(f); setTimeout(()=>f.remove(),700);
+}
+
+function save(){ S.lastSeen = Date.now(); localStorage.setItem(SAVE_KEY, JSON.stringify(S)); }
+function load(){ const raw=localStorage.getItem(SAVE_KEY); if(!raw) return; try{ Object.assign(S, JSON.parse(raw)); }catch{} }
+
+function applyOffline(){
+const now=Date.now();
+const secs=Math.max(0,Math.floor((now-(S.lastSeen||now))/1000));
+if(secs<10) return;
+const capped=Math.min(secs,8*3600);
+const gain=spsVal()*capped;
+if(gain>0){
+S.spores += gain; S.pendingPoints += gain;
+offlineBox.style.display="block";
+offlineBox.innerHTML=`🕒 Away for <b>${capped}s</b>. Offline gain: <b>${nf(gain)}</b> Spores`;
+}
+}
+
+function render(){
+spores.textContent=nf(S.spores);
+tap.textContent=nf(tapVal());
+sps.textContent=nf(spsVal());
+mult.textContent=S.multiplier.toFixed(2)+"x";
+soundBtn.textContent=S.sound ? "🔊 Sound: ON" : "🔈 Sound: OFF";
+
+shop.innerHTML="";
+for(const u of U){
+const c=cost(u), l=lvl(u.id);
+const row=document.createElement("div");
+row.className="row";
+row.innerHTML = `<div><div class="name">${u.name} <span class="muted">(Lv ${l})</span></div><div class="desc">${u.desc}</div></div>`;
+const b=document.createElement("button");
+b.className="buy"; b.textContent="Buy "+nf(c); b.disabled=S.spores<c;
+b.onclick=()=>{ if(S.spores<c) return; S.spores-=c; S.upgrades[u.id]=l+1; beep(520,.04,.03); save(); render(); };
+row.appendChild(b); shop.appendChild(row);
+}
+
+prestigeBtn.disabled = S.spores < 50000;
+prestigeBtn.style.opacity = prestigeBtn.disabled ? ".5" : "1";
+prestigeBtn.style.cursor = prestigeBtn.disabled ? "not-allowed" : "pointer";
+}
+
+tapBtn.addEventListener("click",(e)=>{
+const gain=tapVal();
+S.spores += gain;
+S.pendingPoints += gain;
+const r=zone.getBoundingClientRect();
+floatPlus("+"+Math.floor(gain), e.clientX-r.left, e.clientY-r.top);
+beep(880,.03,.02); render();
+});
+
+prestigeBtn.addEventListener("click",()=>{
+if(S.spores<50000) return;
+if(!confirm("Bloom Reset করবে? স্পোর + আপগ্রেড রিসেট হবে.")) return;
+S.bloom += 1;
+S.multiplier = +(S.multiplier * 1.15).toFixed(4);
+S.spores = 0; S.upgrades = {};
+beep(420,.12,.04); save(); render();
+alert("Bloom complete! Multiplier: "+S.multiplier.toFixed(2)+"x");
+});
+
+endRunBtn.addEventListener("click", async ()=>{
+const pts = Math.floor(S.pendingPoints);
+if (pts <= 0) return alert("No new points to send yet.");
+await sendPointsToPlayFun(pts);
+await endGameSession(pts);
+S.pendingPoints = 0; save();
+alert("Points sent to Play.fun ✅");
+});
+
+soundBtn.addEventListener("click",()=>{S.sound=!S.sound; save(); render();});
+saveBtn.addEventListener("click",()=>{save(); alert("Saved ✅");});
+resetBtn.addEventListener("click",()=>{ if(!confirm("সব progress reset হবে. Sure?")) return; localStorage.removeItem(SAVE_KEY); location.reload(); });
+
+setInterval(()=>{ const g = spsVal(); S.spores += g; S.pendingPoints += g; render(); },1000);
+setInterval(save,10000);
+
+setInterval(async ()=>{
+const pts = Math.floor(S.pendingPoints);
+if (pts >= 25) {
+await sendPointsToPlayFun(pts);
+S.pendingPoints = 0;
+save();
+}
+},30000);
+
+(async function boot(){
+load();
+applyOffline();
+render();
+await initSDK();
 })();
-
-function ui(){
-pointsEl.textContent = points.toFixed(1);
-streakEl.textContent = streak;
-chestEl.textContent = `${chestMinutes}m`;
-stationNameEl.textContent = station;
-}
-ui();
-toggleRadio.textContent = "⏸️ Pause Radio";
-
-/* ========= Station + theme ========= */
-function setStation(name){
-station = name;
-sub.textContent = `Now: ${station} • Keep it open, chill, and earn points.`;
-ui();
-}
-st1.onclick = ()=>setStation("Lo-fi");
-st2.onclick = ()=>setStation("Rain");
-st3.onclick = ()=>setStation("Cafe");
-
-nightBtn.onclick = ()=>{
-night = !night;
-document.body.style.background = night
-? "radial-gradient(circle at 20% 20%, #151f33 0%, #0a101c 60%, #070b12 100%)"
-: "radial-gradient(circle at 20% 20%, #1e3454 0%, #0f1d33 55%, #0a1324 100%)";
-};
-
-/* ========= Radio ========= */
-toggleRadio.onclick = () => {
-radioOn = !radioOn;
-toggleRadio.textContent = radioOn ? "⏸️ Pause Radio" : "▶️ Start Radio";
-};
-
-document.addEventListener("visibilitychange", () => {
-isVisible = document.visibilityState === "visible";
-});
-
-/* ========= Idle points ========= */
-setInterval(() => {
-if (!radioOn) return;
-const gain = isVisible ? 1 : 0.5;
-points += gain;
-addPointsSDK(gain);
-localStorage.setItem("cr_points", String(points));
-ui();
-}, 30000);
-
-/* ========= Auto commit প্রতি 60 sec ========= */
-setInterval(async () => {
-if (!radioOn) return;
-await commitPoints();
-}, 60000);
-
-/* ========= Hourly chest ========= */
-setInterval(() => {
-if (!radioOn) return;
-chestMinutes--;
-if (chestMinutes <= 0) {
-chestMinutes = 60;
-points += 20;
-addPointsSDK(20);
-}
-localStorage.setItem("cr_chest_min", String(chestMinutes));
-localStorage.setItem("cr_points", String(points));
-ui();
-}, 60000);
-
-/* ========= Bonus task ========= */
-setInterval(() => {
-if (!radioOn || taskActive) return;
-
-taskActive = true;
-taskTapCount = 0;
-taskLeft = TASK_SECONDS;
-tapBtn.disabled = false;
-taskState.textContent = `Tap ${TASK_NEED} times in ${TASK_SECONDS}s`;
-
-const t = setInterval(() => {
-taskLeft--;
-
-const progress = Math.min(100, (taskTapCount / TASK_NEED) * 100);
-taskFill.style.width = progress + "%";
-
-taskState.textContent = taskTapCount >= TASK_NEED
-? "Done! wait for reward..."
-: `Tap ${TASK_NEED} times in ${taskLeft}s`;
-
-if (taskTapCount >= TASK_NEED) {
-clearInterval(t);
-taskActive = false;
-tapBtn.disabled = true;
-taskFill.style.width = "100%";
-
-points += 3;
-addPointsSDK(3);
-localStorage.setItem("cr_points", String(points));
-taskState.textContent = "✅ Bonus +3 points! Next task in ~60s";
-ui();
-
-setTimeout(()=>{ taskFill.style.width = "0%"; }, 1200);
-} else if (taskLeft <= 0) {
-clearInterval(t);
-taskActive = false;
-tapBtn.disabled = true;
-taskFill.style.width = "0%";
-taskState.textContent = "❌ Missed. Next task in ~60s";
-}
-}, 1000);
-
-}, 60000);
-
-tapBtn.onclick = () => {
-if (!taskActive) return;
-taskTapCount++;
-};
-
-/* ========= Visualizer ========= */
-function drawViz(){
-vz.clearRect(0,0,viz.width,viz.height);
-
-for(let i=0;i<64;i++){
-const wave = (Math.sin((Date.now()/220)+(i*0.35))+1)*18;
-const h = wave + (radioOn ? 14 : 2);
-vz.fillStyle = `hsla(${180+i*2}, 85%, 65%, .9)`;
-vz.fillRect(i*10+8, viz.height-h-6, 7, h);
-}
-
-requestAnimationFrame(drawViz);
-}
-drawViz();
-
-/* ========= Final save ========= */
-window.addEventListener("beforeunload", () => {
-commitPoints();
-});
 </script>
 </body>
 </html>
