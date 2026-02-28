@@ -5,169 +5,227 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <!-- Play.fun SDK -->
-<meta name="x-ogp-key" content="d0462b53-483e-409d-a626-41dce5ad6a4d" id="ogp-key-meta" />
+<meta name="x-ogp-key" content="YOUR_OGP_KEY_HERE" id="ogp-key-meta" />
 <script src="https://sdk.play.fun"></script>
 
-<title>Shroom Bloom Idle</title>
+<title>Shroom Bloom Deluxe</title>
+
 <style>
 :root{
---bg1:#050816;
---bg2:#0b1430;
---card1:#0c1b3c;
---card2:#09142e;
---line:#35508f;
---text:#f8fafc;
---muted:#9fb0d5;
+--bg:#070b1a;
+--glass:rgba(13, 24, 54, 0.62);
+--glass-2:rgba(8, 16, 38, 0.7);
+--line:rgba(120, 160, 255, 0.32);
+--text:#f8fbff;
+--muted:#b2c2e6;
 --green:#22c55e;
 --gold:#f59e0b;
+--pink:#ff4d8f;
+--pink2:#ff1f6b;
+--ok:#86efac;
 }
+
 *{box-sizing:border-box}
 body{
 margin:0;
-font-family:Inter,system-ui,Arial,sans-serif;
+min-height:100vh;
+font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
 color:var(--text);
 background:
-radial-gradient(circle at 20% 0%, #233c8b 0%, var(--bg2) 35%, var(--bg1) 80%),
-linear-gradient(180deg, #020617, #050816);
-min-height:100vh;
+radial-gradient(900px 420px at 0% -10%, #304ea5 0%, transparent 60%),
+radial-gradient(800px 400px at 100% 0%, #16377d 0%, transparent 65%),
+linear-gradient(180deg, #060916 0%, #04070f 100%);
 }
+
+.noise::before{
+content:"";
+position:fixed; inset:0;
+pointer-events:none;
+opacity:.08;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='%23ffffff'%3E%3Ccircle cx='10' cy='12' r='1'/%3E%3Ccircle cx='44' cy='33' r='1'/%3E%3Ccircle cx='99' cy='67' r='1'/%3E%3Ccircle cx='125' cy='10' r='1'/%3E%3Ccircle cx='20' cy='88' r='1'/%3E%3Ccircle cx='75' cy='102' r='1'/%3E%3Ccircle cx='130' cy='120' r='1'/%3E%3C/g%3E%3C/svg%3E");
+}
+
 .wrap{
-max-width:1100px;
+max-width:1160px;
 margin:0 auto;
-padding:14px;
+padding:16px;
 display:grid;
-grid-template-columns:1.08fr 1fr;
-gap:12px;
+grid-template-columns: 1.08fr 1fr;
+gap:14px;
 }
-.card{
-background:linear-gradient(180deg,var(--card1),var(--card2));
-border:1px solid rgba(83,123,220,.45);
-box-shadow:0 12px 32px rgba(0,0,0,.35);
-border-radius:14px;
-padding:12px;
+
+.panel{
+background:linear-gradient(180deg, var(--glass), var(--glass-2));
+border:1px solid var(--line);
+border-radius:18px;
+backdrop-filter: blur(8px);
+box-shadow: 0 12px 35px rgba(0,0,0,.35);
+padding:14px;
 }
-h1{margin:0;font-size:24px}
-.muted{color:var(--muted);font-size:12px}
+
+h1{
+margin:0;
+font-size:26px;
+letter-spacing:.3px;
+}
+.sub{
+margin-top:4px;
+color:var(--muted);
+font-size:12px;
+}
+
 .status{
-margin-top:8px;
+margin-top:10px;
 font-size:12px;
 color:#dbeafe;
-background:rgba(30,64,175,.18);
-border:1px solid rgba(96,165,250,.35);
-border-radius:8px;
-padding:6px 8px;
+border:1px solid rgba(110,160,255,.35);
+background:rgba(30,64,175,.2);
+border-radius:10px;
+padding:8px 10px;
+}
+
+.offline{
+margin-top:10px;
+border:1px dashed rgba(245,158,11,.55);
+background:rgba(245,158,11,.15);
+border-radius:10px;
+padding:8px 10px;
+font-size:12px;
+display:none;
 }
 
 .stats{
-margin-top:10px;
+margin-top:12px;
 display:grid;
 grid-template-columns:repeat(2,minmax(120px,1fr));
-gap:8px;
+gap:10px;
 }
 .stat{
-background:#081127;
-border:1px solid rgba(115,151,231,.22);
-border-radius:10px;
-padding:8px;
+background:rgba(6,12,28,.78);
+border:1px solid rgba(120,160,255,.22);
+border-radius:12px;
+padding:9px 10px;
 }
-.k{font-size:12px;color:var(--muted)}
-.v{font-size:20px;font-weight:800;margin-top:2px}
+.k{font-size:11px;color:var(--muted)}
+.v{margin-top:2px;font-size:22px;font-weight:800}
 
 .tap-zone{
-margin-top:10px;
-height:340px;
-border-radius:14px;
+margin-top:12px;
+height:350px;
+border-radius:18px;
+border:1px solid rgba(74,222,128,.35);
 background:
-radial-gradient(circle at 70% 20%, rgba(16,185,129,.25), transparent 35%),
-linear-gradient(150deg,#064e3b,#14532d 45%,#052e16);
-border:1px solid rgba(34,197,94,.35);
-display:flex;align-items:center;justify-content:center;
-position:relative;overflow:hidden;
+radial-gradient(circle at 70% 18%, rgba(16,185,129,.35), transparent 36%),
+radial-gradient(circle at 30% 80%, rgba(255,77,143,.16), transparent 38%),
+linear-gradient(150deg,#0e5d43,#0f6a36 45%, #084122);
+display:flex;
+align-items:center;
+justify-content:center;
+position:relative;
+overflow:hidden;
+}
+
+.tap-ring{
+position:absolute;
+width:300px;height:300px;border-radius:999px;
+border:2px solid rgba(255,255,255,.15);
+animation:pulse 2.6s infinite ease-in-out;
+pointer-events:none;
+}
+@keyframes pulse{
+0%,100%{transform:scale(1);opacity:.35}
+50%{transform:scale(1.06);opacity:.12}
 }
 
 .m-btn{
-width:220px;height:220px;border-radius:999px;border:0;cursor:pointer;
-font-size:64px;color:#fff;
-background:radial-gradient(circle at 30% 25%, #ffb7c9 0%, #ff4d6d 45%, #a00033 100%);
-box-shadow:0 14px 42px rgba(255,77,109,.45);
-transition:transform .08s ease, filter .2s ease;
-user-select:none;
+width:230px;height:230px;border-radius:999px;
+border:0;cursor:pointer;user-select:none;
+font-size:74px;color:#fff;
+background:
+radial-gradient(circle at 35% 25%, #ffc2d6 0%, var(--pink) 46%, var(--pink2) 100%);
+box-shadow:
+0 18px 48px rgba(255,31,107,.45),
+inset 0 -18px 34px rgba(120,0,40,.3);
+transition: transform .08s ease, filter .2s ease;
 }
 .m-btn:hover{filter:brightness(1.06)}
-.m-btn:active{transform:scale(.95)}
+.m-btn:active{transform:scale(.94)}
 
 .float{
 position:absolute;
 font-weight:800;
-color:#bbf7d0;
-text-shadow:0 0 12px rgba(34,197,94,.7);
+color:var(--ok);
+text-shadow:0 0 12px rgba(134,239,172,.75);
+animation:up .75s ease-out forwards;
 pointer-events:none;
-animation:up .7s ease-out forwards;
 }
-@keyframes up{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-54px)}}
+@keyframes up{
+from{opacity:1;transform:translateY(0)}
+to{opacity:0;transform:translateY(-56px)}
+}
 
-.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.toolbar{
+margin-top:12px;
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+}
 .sbtn{
-border:1px solid rgba(130,160,235,.35);
-background:#182c5e;
+border:1px solid rgba(140,170,245,.34);
+background:linear-gradient(180deg,#1f3f86,#17336f);
 color:#fff;
-border-radius:8px;
-padding:7px 10px;
+border-radius:10px;
+padding:8px 11px;
 font-size:12px;
 cursor:pointer;
 }
 
-.shop .row{
+.shop-title{margin:0 0 10px;font-size:18px}
+.row{
 display:grid;
 grid-template-columns:1fr auto;
-gap:8px;
-background:linear-gradient(180deg,#08152f,#060f24);
-border:1px solid rgba(87,132,255,.25);
-border-radius:10px;
-padding:9px;
-margin-bottom:8px;
+gap:9px;
+background:linear-gradient(180deg, #0a1a3b, #07142f);
+border:1px solid rgba(113,145,229,.28);
+border-radius:12px;
+padding:10px;
+margin-bottom:9px;
 }
-.name{font-weight:700}
-.desc{font-size:12px;color:var(--muted)}
+.name{font-weight:700;font-size:14px}
+.desc{font-size:12px;color:var(--muted);margin-top:2px}
 .buy{
-border:0;border-radius:8px;padding:8px 10px;min-width:96px;
-cursor:pointer;font-weight:700;color:#052e16;
-background:linear-gradient(180deg,#4ade80,#16a34a);
+border:0;border-radius:9px;
+padding:8px 10px;min-width:100px;
+cursor:pointer;font-weight:800;
+color:#063116;
+background:linear-gradient(180deg,#6af0a0,#22c55e);
 }
 .buy:disabled{opacity:.45;cursor:not-allowed}
 
-.prestige button{
+.prestige-btn{
 width:100%;
-border:0;border-radius:10px;padding:10px 12px;
+border:0;border-radius:12px;
+padding:10px 12px;
 font-weight:800;cursor:pointer;
-background:linear-gradient(180deg,#fcd34d,#f59e0b);
-color:#3f2a00;
+color:#3c2600;
+background:linear-gradient(180deg,#fde68a,#f59e0b);
 margin-top:8px;
 }
 
-.offline{
-margin-top:8px;
-border:1px dashed rgba(245,158,11,.55);
-background:rgba(245,158,11,.12);
-border-radius:9px;
-padding:8px;
-font-size:13px;
-display:none;
-}
-
-@media (max-width:900px){
+@media (max-width:940px){
 .wrap{grid-template-columns:1fr}
-.tap-zone{height:280px}
-.m-btn{width:178px;height:178px;font-size:52px}
-h1{font-size:21px}
+.tap-zone{height:290px}
+.m-btn{width:182px;height:182px;font-size:58px}
+.tap-ring{width:240px;height:240px}
+h1{font-size:22px}
 }
 </style>
 </head>
-<body>
+<body class="noise">
 <div class="wrap">
-<section class="card">
-<h1>🍄 Shroom Bloom Idle</h1>
-<div class="muted">Tap • Upgrade • Prestige • Reliable Auto Sync</div>
+<section class="panel">
+<h1>🍄 Shroom Bloom Deluxe</h1>
+<div class="sub">Beautiful UI • Better Sync • Play.fun SDK</div>
 
 <div id="sdkStatus" class="status">SDK: initializing...</div>
 <div id="offlineBox" class="offline"></div>
@@ -180,11 +238,12 @@ h1{font-size:21px}
 </div>
 
 <div class="tap-zone" id="zone">
+<div class="tap-ring"></div>
 <button id="tapBtn" class="m-btn" aria-label="Harvest">🍄</button>
 </div>
 
 <div class="toolbar">
-<button class="sbtn" id="soundBtn">🔊 Sound: ON</button>
+<button class="sbtn" id="soundBtn">🔊 Sound ON</button>
 <button class="sbtn" id="saveBtn">💾 Save</button>
 <button class="sbtn" id="syncBtn">☁️ Sync Now</button>
 <button class="sbtn" id="endBtn">🏁 End Run</button>
@@ -193,21 +252,21 @@ h1{font-size:21px}
 </section>
 
 <section>
-<div class="card shop">
-<h3 style="margin:0 0 8px">🛒 Upgrades</h3>
+<div class="panel">
+<h3 class="shop-title">🛒 Upgrades</h3>
 <div id="shop"></div>
 </div>
 
-<div class="card prestige" style="margin-top:12px">
-<h3 style="margin:0 0 6px">🌼 Bloom Reset</h3>
-<div class="muted">Unlock at 50,000 spores. Permanent +15% multiplier each reset.</div>
-<button id="prestigeBtn">Bloom Reset (+15%)</button>
+<div class="panel" style="margin-top:12px">
+<h3 style="margin:0 0 6px;font-size:18px">🌼 Bloom Reset</h3>
+<div class="sub">Unlock at 50,000 spores. Permanent +15% multiplier per reset.</div>
+<button id="prestigeBtn" class="prestige-btn">Bloom Reset (+15%)</button>
 </div>
 </section>
 </div>
 
 <script>
-/**************** SDK ****************/
+// ---------- SDK ----------
 const GAME_ID = "562396db-e86e-4537-b5a3-2a1dbdb39778";
 let ogp = null;
 let pendingPoints = 0;
@@ -216,7 +275,7 @@ let syncInFlight = false;
 async function initSDK() {
 try {
 if (typeof OpenGameSDK === "undefined") {
-sdkStatus.textContent = "SDK: not loaded (check script tag)";
+sdkStatus.textContent = "SDK: not loaded (check script)";
 return;
 }
 ogp = new OpenGameSDK({
@@ -226,7 +285,7 @@ logLevel: "warn"
 await ogp.init({ gameId: GAME_ID });
 sdkStatus.textContent = "SDK: connected ✅";
 } catch (e) {
-console.error(e);
+console.warn(e);
 sdkStatus.textContent = "SDK: init failed (check OGP key / game id)";
 }
 }
@@ -243,8 +302,7 @@ return false;
 }
 
 async function flushPoints(reason="auto") {
-if (syncInFlight) return;
-if (!ogp) return;
+if (syncInFlight || !ogp) return;
 const pts = Math.floor(pendingPoints);
 if (pts <= 0) return;
 
@@ -254,9 +312,9 @@ if (ok) {
 pendingPoints -= pts;
 if (pendingPoints < 0) pendingPoints = 0;
 save();
-sdkStatus.textContent = `SDK: synced ${pts} points (${reason}) ✅`;
+sdkStatus.textContent = `SDK: synced ${pts} pts (${reason}) ✅`;
 } else {
-sdkStatus.textContent = `SDK: sync retry pending (${reason})`;
+sdkStatus.textContent = `SDK: sync pending (${reason})`;
 }
 syncInFlight = false;
 }
@@ -265,14 +323,17 @@ async function endRun() {
 await flushPoints("end-run");
 if (!ogp) return;
 try {
-await ogp.endGame({ score: Math.floor(S.spores), meta: { bloom: S.bloom } });
+await ogp.endGame({
+score: Math.floor(S.spores),
+meta: { bloom: S.bloom }
+});
 sdkStatus.textContent = "SDK: run ended ✅";
 } catch (e) {
 console.warn("endGame failed:", e);
 }
 }
 
-/**************** Game ****************/
+// ---------- GAME ----------
 const U = [
 {id:"basket",name:"Better Basket",desc:"+1 Tap",base:20,scale:1.20,tap:1,sps:0},
 {id:"soil",name:"Fertile Soil",desc:"+1 / sec",base:35,scale:1.22,tap:0,sps:1},
@@ -288,143 +349,201 @@ const U = [
 {id:"queen",name:"Spore Queen",desc:"+60 / sec",base:15000,scale:1.33,tap:0,sps:60}
 ];
 
-const SAVE_KEY = "shroomBloomV3";
-const S = { spores:0, multiplier:1, bloom:0, upgrades:{}, sound:true, lastSeen:Date.now() };
+const SAVE_KEY = "shroomBloomDeluxeV1";
+const S = {
+spores:0,
+multiplier:1,
+bloom:0,
+upgrades:{},
+sound:true,
+lastSeen:Date.now()
+};
 
-const lvl=id=>S.upgrades[id]||0;
-const cost=u=>Math.floor(u.base*Math.pow(u.scale,lvl(u.id)));
+const lvl = id => S.upgrades[id] || 0;
+const cost = u => Math.floor(u.base * Math.pow(u.scale, lvl(u.id)));
 
-function tapVal(){ let t=1; for(const u of U) t += lvl(u.id)*u.tap; return t*S.multiplier; }
-function spsVal(){ let p=0; for(const u of U) p += lvl(u.id)*u.sps; return p*S.multiplier; }
-
-function nf(n){
-if(n<1000) return Math.floor(n).toString();
-const units=["K","M","B","T","Qa"]; let i=-1;
-while(n>=1000 && i<units.length-1){n/=1000;i++}
-return n.toFixed(2)+units[i];
+function tapVal(){
+let t = 1;
+for (const u of U) t += lvl(u.id) * u.tap;
+return t * S.multiplier;
+}
+function spsVal(){
+let p = 0;
+for (const u of U) p += lvl(u.id) * u.sps;
+return p * S.multiplier;
 }
 
-let audioCtx=null;
-function beep(freq=700,dur=0.05,vol=0.02){
-if(!S.sound) return;
+function nf(n){
+if (n < 1000) return Math.floor(n).toString();
+const units = ["K","M","B","T","Qa"];
+let i = -1;
+while (n >= 1000 && i < units.length - 1) { n /= 1000; i++; }
+return n.toFixed(2) + units[i];
+}
+
+let audioCtx = null;
+function beep(freq=700, dur=0.05, vol=0.02){
+if (!S.sound) return;
 try{
-audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
-const o=audioCtx.createOscillator(), g=audioCtx.createGain();
-o.type="triangle"; o.frequency.value=freq; g.gain.value=vol;
-o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+dur);
+audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+const o = audioCtx.createOscillator();
+const g = audioCtx.createGain();
+o.type = "triangle";
+o.frequency.value = freq;
+g.gain.value = vol;
+o.connect(g); g.connect(audioCtx.destination);
+o.start();
+o.stop(audioCtx.currentTime + dur);
 }catch{}
 }
 
-function addGamePoints(x){ if(x>0) pendingPoints += x; }
-
-function floatPlus(text,x,y){
-const f=document.createElement("div");
-f.className="float"; f.textContent=text;
-f.style.left=x+"px"; f.style.top=y+"px";
-zone.appendChild(f); setTimeout(()=>f.remove(),700);
+function addPointsLocal(x){
+if (!x || x <= 0) return;
+pendingPoints += x;
 }
 
-function save(){ S.lastSeen=Date.now(); localStorage.setItem(SAVE_KEY, JSON.stringify({...S,pendingPoints})); }
+function floatPlus(text, x, y){
+const el = document.createElement("div");
+el.className = "float";
+el.textContent = text;
+el.style.left = x + "px";
+el.style.top = y + "px";
+zone.appendChild(el);
+setTimeout(() => el.remove(), 750);
+}
+
+function save(){
+S.lastSeen = Date.now();
+localStorage.setItem(SAVE_KEY, JSON.stringify({ ...S, pendingPoints }));
+}
+
 function load(){
-const raw=localStorage.getItem(SAVE_KEY);
-if(!raw) return;
+const raw = localStorage.getItem(SAVE_KEY);
+if (!raw) return;
 try{
-const d=JSON.parse(raw);
-Object.assign(S,d);
+const d = JSON.parse(raw);
+Object.assign(S, d);
 pendingPoints = d.pendingPoints || 0;
 }catch{}
 }
 
 function applyOffline(){
-const now=Date.now();
-const secs=Math.max(0,Math.floor((now-(S.lastSeen||now))/1000));
-if(secs<10) return;
-const capped=Math.min(secs,8*3600);
-const gain=spsVal()*capped;
-if(gain>0){
+const now = Date.now();
+const secs = Math.max(0, Math.floor((now - (S.lastSeen || now))/1000));
+if (secs < 10) return;
+const capped = Math.min(secs, 8*3600);
+const gain = spsVal() * capped;
+if (gain > 0){
 S.spores += gain;
-addGamePoints(gain);
-offlineBox.style.display="block";
-offlineBox.innerHTML=`🕒 You were away ${capped}s • Offline +${nf(gain)} spores`;
+addPointsLocal(gain);
+offlineBox.style.display = "block";
+offlineBox.innerHTML = `🕒 Offline ${capped}s • +${nf(gain)} spores`;
 }
 }
 
 function render(){
-spores.textContent=nf(S.spores);
-tap.textContent=nf(tapVal());
-sps.textContent=nf(spsVal());
-mult.textContent=S.multiplier.toFixed(2)+"x";
-soundBtn.textContent=S.sound ? "🔊 Sound: ON":"🔈 Sound: OFF";
+spores.textContent = nf(S.spores);
+tap.textContent = nf(tapVal());
+sps.textContent = nf(spsVal());
+mult.textContent = S.multiplier.toFixed(2) + "x";
+soundBtn.textContent = S.sound ? "🔊 Sound ON" : "🔈 Sound OFF";
 
-shop.innerHTML="";
-for(const u of U){
-const c=cost(u), l=lvl(u.id);
-const row=document.createElement("div");
-row.className="row";
-row.innerHTML=`<div><div class="name">${u.name} <span class="muted">(Lv ${l})</span></div><div class="desc">${u.desc}</div></div>`;
-const b=document.createElement("button");
-b.className="buy"; b.textContent="Buy "+nf(c); b.disabled=S.spores<c;
-b.onclick=()=>{
-if(S.spores<c) return;
-S.spores-=c; S.upgrades[u.id]=l+1;
+shop.innerHTML = "";
+for (const u of U){
+const c = cost(u), l = lvl(u.id);
+
+const row = document.createElement("div");
+row.className = "row";
+
+const left = document.createElement("div");
+left.innerHTML = `
+<div class="name">${u.name} <span style="color:#9db2df;font-size:12px">(Lv ${l})</span></div>
+<div class="desc">${u.desc}</div>
+`;
+
+const b = document.createElement("button");
+b.className = "buy";
+b.textContent = "Buy " + nf(c);
+b.disabled = S.spores < c;
+b.onclick = () => {
+if (S.spores < c) return;
+S.spores -= c;
+S.upgrades[u.id] = l + 1;
 beep(520,.04,.03);
 save(); render();
 };
-row.appendChild(b); shop.appendChild(row);
+
+row.appendChild(left);
+row.appendChild(b);
+shop.appendChild(row);
 }
 
 prestigeBtn.disabled = S.spores < 50000;
-prestigeBtn.style.opacity = prestigeBtn.disabled ? ".5":"1";
-prestigeBtn.style.cursor = prestigeBtn.disabled ? "not-allowed":"pointer";
+prestigeBtn.style.opacity = prestigeBtn.disabled ? ".5" : "1";
+prestigeBtn.style.cursor = prestigeBtn.disabled ? "not-allowed" : "pointer";
 }
 
-tapBtn.addEventListener("click",(e)=>{
-const gain=tapVal();
+tapBtn.addEventListener("click", (e) => {
+const gain = tapVal();
 S.spores += gain;
-addGamePoints(gain);
-const r=zone.getBoundingClientRect();
-floatPlus("+"+Math.floor(gain), e.clientX-r.left, e.clientY-r.top);
+addPointsLocal(gain);
+
+const r = zone.getBoundingClientRect();
+floatPlus("+" + Math.floor(gain), e.clientX - r.left, e.clientY - r.top);
+
 beep(880,.03,.02);
 render();
 });
 
-prestigeBtn.addEventListener("click",()=>{
-if(S.spores<50000) return;
-if(!confirm("Bloom Reset? spores + upgrades reset হবে.")) return;
+prestigeBtn.addEventListener("click", () => {
+if (S.spores < 50000) return;
+if (!confirm("Bloom Reset? Spores + upgrades reset হবে.")) return;
+
 S.bloom += 1;
-S.multiplier = +(S.multiplier*1.15).toFixed(4);
+S.multiplier = +(S.multiplier * 1.15).toFixed(4);
 S.spores = 0;
 S.upgrades = {};
+
 beep(420,.12,.04);
 save(); render();
-alert("Bloom complete! Multiplier: "+S.multiplier.toFixed(2)+"x");
+alert("Bloom complete! New multiplier: " + S.multiplier.toFixed(2) + "x");
 });
 
-soundBtn.addEventListener("click",()=>{S.sound=!S.sound; save(); render();});
-saveBtn.addEventListener("click",()=>{save(); alert("Saved ✅");});
-syncBtn.addEventListener("click",()=>flushPoints("manual-sync"));
-endBtn.addEventListener("click",endRun);
-resetBtn.addEventListener("click",()=>{
-if(!confirm("সব progress reset হবে. sure?")) return;
+soundBtn.addEventListener("click", () => { S.sound = !S.sound; save(); render(); });
+saveBtn.addEventListener("click", () => { save(); alert("Saved ✅"); });
+syncBtn.addEventListener("click", () => flushPoints("manual"));
+endBtn.addEventListener("click", endRun);
+resetBtn.addEventListener("click", () => {
+if (!confirm("সব progress reset হবে. sure?")) return;
 localStorage.removeItem(SAVE_KEY);
 location.reload();
 });
 
-// game tick
-setInterval(()=>{
-const g=spsVal();
+// Main game loop
+setInterval(() => {
+const g = spsVal();
 S.spores += g;
-addGamePoints(g);
+addPointsLocal(g);
 render();
-},1000);
+}, 1000);
 
-// reliable sync + save
-setInterval(()=>flushPoints("interval"),8000);
-setInterval(save,10000);
-document.addEventListener("visibilitychange",()=>{
-if(document.visibilityState==="hidden"){ flushPoints("hidden"); save(); }
+// Reliable sync/save loops
+setInterval(() => flushPoints("interval"), 5000);
+setInterval(save, 10000);
+
+// Extra periodic endGame ping (helps leaderboard visibility)
+setInterval(() => endRun(), 60000);
+
+document.addEventListener("visibilitychange", () => {
+if (document.visibilityState === "hidden"){
+flushPoints("hidden");
+save();
+}
 });
-window.addEventListener("beforeunload",()=>{ flushPoints("unload"); save(); });
+window.addEventListener("beforeunload", () => {
+flushPoints("unload");
+save();
+});
 
 (async function boot(){
 load();
