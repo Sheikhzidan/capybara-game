@@ -5,202 +5,210 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="x-ogp-key" content="d0462b53-483e-409d-a626-41dce5ad6a4d" id="ogp-key-meta" />
 <script src="https://sdk.play.fun"></script>
-<title>Shroom Bloom - No Scroll</title>
+<title>Shroom Bloom Cyber Red</title>
 
 <style>
-html, body {
-margin: 0;
-height: 100%;
-overflow: hidden;
-font-family: Inter, system-ui, Arial, sans-serif;
-background: #0a1022;
-color: #f8fbff;
+html, body{
+margin:0;
+height:100%;
+overflow:hidden;
+font-family:Inter,system-ui,Arial,sans-serif;
+color:#f5f7ff;
+background:#070000;
 }
 
-.wrap {
-height: 100vh;
-max-width: 1180px;
-margin: 0 auto;
-padding: 8px;
-display: grid;
-grid-template-columns: 1.1fr 0.9fr;
-gap: 8px;
+.wrap{
+height:100vh;
+max-width:1180px;
+margin:0 auto;
+padding:8px;
+display:grid;
+grid-template-columns:1.1fr .9fr;
+gap:8px;
 }
 
-.panel {
-background: #0f1c3f;
-border: 1px solid #233f7a;
-border-radius: 12px;
-padding: 8px;
-box-shadow: 0 6px 18px rgba(0,0,0,.25);
-min-height: 0;
+.panel{
+background:linear-gradient(180deg, rgba(30,0,0,.92), rgba(10,0,0,.92));
+border:1px solid rgba(255,30,30,.35);
+border-radius:12px;
+padding:8px;
+box-shadow:0 8px 24px rgba(255,0,0,.15);
+min-height:0;
 }
 
-h1 { font-size: 18px; margin: 0; }
-.sub { font-size: 11px; color: #9fb2de; margin-top: 2px; }
+h1{font-size:18px;margin:0}
+.sub{font-size:11px;color:#f0b4b4;margin-top:2px}
 
-.status {
-margin-top: 6px;
-font-size: 11px;
-border: 1px solid #355ca7;
-background: #17316a;
-border-radius: 8px;
-padding: 6px 8px;
-color: #eaf1ff;
+.status{
+margin-top:6px;
+font-size:11px;
+border:1px solid rgba(255,80,80,.4);
+background:#2a0000;
+border-radius:8px;
+padding:6px 8px;
+color:#ffe5e5;
 }
 
-.offline {
-margin-top: 6px;
-border: 1px dashed #8b6b1f;
-background: #3e2f0c;
-border-radius: 8px;
-padding: 6px 8px;
-font-size: 11px;
-display: none;
-color: #ffe7ad;
+.offline{
+margin-top:6px;
+border:1px dashed #8b6b1f;
+background:#3e2f0c;
+border-radius:8px;
+padding:6px 8px;
+font-size:11px;
+display:none;
+color:#ffe7ad;
 }
 
-.stats {
-margin-top: 6px;
-display: grid;
-grid-template-columns: repeat(2, minmax(120px, 1fr));
-gap: 6px;
+.stats{
+margin-top:6px;
+display:grid;
+grid-template-columns:repeat(2,minmax(120px,1fr));
+gap:6px;
 }
 
-.stat {
-background: #0b1530;
-border: 1px solid #233a6f;
-border-radius: 8px;
-padding: 6px 8px;
+.stat{
+background:#120000;
+border:1px solid rgba(255,70,70,.25);
+border-radius:8px;
+padding:6px 8px;
 }
 
-.k { font-size: 10px; color: #9fb2de; }
-.v { font-size: 16px; font-weight: 700; margin-top: 1px; }
+.k{font-size:10px;color:#f0b4b4}
+.v{font-size:16px;font-weight:700;margin-top:1px}
 
-.tap-zone {
-margin-top: 6px;
-height: min(30vh, 220px);
-border-radius: 10px;
-border: 1px solid #2f8a62;
-background: linear-gradient(145deg, #0e6b5a, #14804b);
-display: flex;
-align-items: center;
-justify-content: center;
-position: relative;
-overflow: hidden;
+.tap-zone{
+margin-top:6px;
+height:min(30vh,220px);
+border-radius:10px;
+border:1px solid rgba(255,50,50,.45);
+background:
+radial-gradient(circle at 70% 20%, rgba(255,40,40,.18), transparent 35%),
+repeating-linear-gradient(
+to bottom,
+rgba(255,0,0,.08) 0px,
+rgba(255,0,0,.08) 2px,
+transparent 2px,
+transparent 18px
+),
+#0a0000;
+display:flex;
+align-items:center;
+justify-content:center;
+position:relative;
+overflow:hidden;
 }
 
-.m-btn {
-width: min(21vw, 124px);
-height: min(21vw, 124px);
-border-radius: 999px;
-border: 2px solid #f4f7ff;
-font-size: 40px;
-cursor: pointer;
-background: radial-gradient(circle at 35% 25%, #ffbdd6 0%, #ff4f9c 55%, #ff1f73 100%);
-color: #fff;
-box-shadow: 0 8px 22px rgba(255,45,128,.35);
-transition: transform .08s ease;
-user-select: none;
+.m-btn{
+width:min(21vw,124px);
+height:min(21vw,124px);
+border-radius:999px;
+border:2px solid #ffd7df;
+font-size:42px;
+cursor:pointer;
+color:#fff;
+background:radial-gradient(circle at 35% 25%, #ffb0c8 0%, #ff2e5f 58%, #b6002c 100%);
+box-shadow:0 8px 22px rgba(255,0,80,.45);
+transition:transform .08s ease;
+user-select:none;
 }
 
-.m-btn:active { transform: scale(.95); }
+.m-btn:active{transform:scale(.95)}
 
-.float {
-position: absolute;
-font-weight: 800;
-color: #b8ffce;
-text-shadow: 0 0 10px rgba(34,197,94,.75);
-pointer-events: none;
-animation: up .7s ease-out forwards;
-font-size: 14px;
+.float{
+position:absolute;
+font-weight:800;
+color:#b8ffce;
+text-shadow:0 0 10px rgba(34,197,94,.75);
+pointer-events:none;
+animation:up .7s ease-out forwards;
+font-size:14px;
+}
+@keyframes up{
+from{opacity:1;transform:translateY(0)}
+to{opacity:0;transform:translateY(-46px)}
 }
 
-@keyframes up {
-from { opacity: 1; transform: translateY(0); }
-to { opacity: 0; transform: translateY(-46px); }
+.toolbar{
+margin-top:6px;
+display:flex;
+gap:6px;
+flex-wrap:wrap;
 }
 
-.toolbar {
-margin-top: 6px;
-display: flex;
-gap: 6px;
-flex-wrap: wrap;
+.sbtn{
+font-size:11px;
+padding:6px 8px;
+border-radius:8px;
+border:1px solid rgba(255,80,80,.4);
+background:#2a0000;
+color:#fff;
+cursor:pointer;
 }
 
-.sbtn {
-font-size: 11px;
-padding: 6px 8px;
-border-radius: 8px;
-border: 1px solid #345aa8;
-background: #1e3d80;
-color: #fff;
-cursor: pointer;
+.right-col{
+height:100%;
+min-height:0;
+display:grid;
+grid-template-rows:1fr auto;
+gap:8px;
 }
 
-.right-col {
-height: 100%;
-min-height: 0;
-display: grid;
-grid-template-rows: 1fr auto;
-gap: 8px;
+.shop{
+min-height:0;
+max-height:calc(100vh - 24px);
+overflow-y:auto;
+padding-right:2px;
 }
 
-.shop {
-min-height: 0;
-max-height: calc(100vh - 24px);
-overflow-y: auto;
-padding-right: 2px;
+.row{
+display:grid;
+grid-template-columns:1fr auto;
+gap:6px;
+padding:7px;
+margin-bottom:6px;
+border-radius:8px;
+border:1px solid rgba(255,70,70,.25);
+background:#120000;
 }
 
-.row {
-display: grid;
-grid-template-columns: 1fr auto;
-gap: 6px;
-padding: 7px;
-margin-bottom: 6px;
-border-radius: 8px;
-border: 1px solid #2a467f;
-background: #0c1a39;
+.name{font-size:13px;font-weight:700}
+.desc{font-size:11px;color:#f0b4b4}
+
+.buy{
+min-width:82px;
+font-size:11px;
+padding:6px 8px;
+border:0;
+border-radius:7px;
+background:linear-gradient(180deg,#ffdf72,#f59e0b);
+color:#2a1800;
+font-weight:700;
+cursor:pointer;
 }
 
-.name { font-size: 13px; font-weight: 700; }
-.desc { font-size: 11px; color: #9fb2de; }
+.buy:disabled{opacity:.45;cursor:not-allowed}
 
-.buy {
-min-width: 82px;
-font-size: 11px;
-padding: 6px 8px;
-border: 0;
-border-radius: 7px;
-background: linear-gradient(180deg, #72f0a8, #22c55e);
-color: #053217;
-font-weight: 700;
-cursor: pointer;
+.prestige-btn{
+width:100%;
+font-size:12px;
+padding:8px 10px;
+border:0;
+border-radius:8px;
+font-weight:800;
+background:linear-gradient(180deg,#fde68a,#f59e0b);
+color:#3f2a00;
+cursor:pointer;
 }
 
-.buy:disabled { opacity: .45; cursor: not-allowed; }
-
-.prestige-btn {
-width: 100%;
-font-size: 12px;
-padding: 8px 10px;
-border: 0;
-border-radius: 8px;
-font-weight: 800;
-background: linear-gradient(180deg, #fde68a, #f59e0b);
-color: #3f2a00;
-cursor: pointer;
+@media (max-width:900px){
+html,body{overflow:auto}
+.wrap{
+height:auto;
+grid-template-columns:1fr;
 }
-
-@media (max-width: 900px) {
-html, body { overflow: auto; }
-.wrap {
-height: auto;
-grid-template-columns: 1fr;
-}
-.shop { max-height: none; overflow: visible; }
-.m-btn { width: 120px; height: 120px; font-size: 38px; }
+.shop{max-height:none;overflow:visible}
+.m-btn{width:120px;height:120px;font-size:38px}
 }
 </style>
 </head>
@@ -208,9 +216,8 @@ grid-template-columns: 1fr;
 <div class="wrap">
 <!-- Left -->
 <section class="panel">
-<h1>🍄 Shroom Bloom</h1>
-<div class="sub">Compact clean layout (no desktop page scroll)</div>
-
+<h1>🍄 Shroom Bloom Cyber Red</h1>
+<div class="sub">Fast sync + auto points + lofi music</div>
 <div id="sdkStatus" class="status">SDK: initializing...</div>
 <div id="offlineBox" class="offline"></div>
 
@@ -226,7 +233,8 @@ grid-template-columns: 1fr;
 </div>
 
 <div class="toolbar">
-<button class="sbtn" id="soundBtn">🔊 Sound ON</button>
+<button class="sbtn" id="soundBtn">🔊 SFX ON</button>
+<button class="sbtn" id="musicBtn">🎵 Music ON</button>
 <button class="sbtn" id="saveBtn">💾 Save</button>
 <button class="sbtn" id="syncBtn">☁️ Sync</button>
 <button class="sbtn" id="endBtn">🏁 End</button>
@@ -249,8 +257,11 @@ grid-template-columns: 1fr;
 </section>
 </div>
 
+<!-- Put your local lofi file in same folder as index.html -->
+<audio id="lofi" src="./lofi.mp3" loop></audio>
+
 <script>
-// Play.fun
+// -------- Play.fun --------
 const GAME_ID = "562396db-e86e-4537-b5a3-2a1dbdb39778";
 let ogp = null;
 let pendingPoints = 0;
@@ -289,8 +300,8 @@ async function flushPoints(reason="auto"){
 if(syncInFlight || !ogp) return;
 const pts = Math.floor(pendingPoints);
 if(pts <= 0) return;
-
 syncInFlight = true;
+
 const ok = await safeAddPoints(pts);
 if(ok){
 pendingPoints -= pts;
@@ -300,6 +311,7 @@ sdkStatus.textContent = `SDK: synced ${pts} (${reason}) ✅`;
 }else{
 sdkStatus.textContent = `SDK: sync pending (${reason})`;
 }
+
 syncInFlight = false;
 }
 
@@ -317,7 +329,7 @@ console.warn("endGame failed:", e);
 }
 }
 
-// Game data
+// -------- Game --------
 const U = [
 {id:"basket",name:"Better Basket",desc:"+1 Tap",base:20,scale:1.20,tap:1,sps:0},
 {id:"soil",name:"Fertile Soil",desc:"+1 / sec",base:35,scale:1.22,tap:0,sps:1},
@@ -332,15 +344,15 @@ const U = [
 {id:"mutation",name:"Mutation Chamber",desc:"+15 Tap, +20 / sec",base:9200,scale:1.31,tap:15,sps:20},
 {id:"queen",name:"Spore Queen",desc:"+60 / sec",base:15000,scale:1.33,tap:0,sps:60}
 ];
-
-const SAVE_KEY = "shroomNoScrollV1";
+const SAVE_KEY = "shroomCyberRedV1";
 const S = {
 spores: 0,
 multiplier: 1,
 bloom: 0,
 upgrades: {},
 sound: true,
-lastSeen: Date.now()
+lastSeen: Date.now(),
+baseAuto: 2 // game open হলেই auto points/sec
 };
 
 const lvl = id => S.upgrades[id] || 0;
@@ -353,7 +365,7 @@ return t * S.multiplier;
 }
 
 function spsVal(){
-let p = 0;
+let p = S.baseAuto;
 for(const u of U) p += lvl(u.id) * u.sps;
 return p * S.multiplier;
 }
@@ -366,6 +378,7 @@ while(n >= 1000 && i < u.length - 1){ n /= 1000; i++; }
 return n.toFixed(2) + u[i];
 }
 
+// SFX
 let audioCtx = null;
 function beep(freq=700, d=0.05, v=0.02){
 if(!S.sound) return;
@@ -379,6 +392,26 @@ o.connect(g); g.connect(audioCtx.destination);
 o.start(); o.stop(audioCtx.currentTime + d);
 }catch{}
 }
+
+// Music
+const lofi = document.getElementById("lofi");
+let musicOn = true;
+document.getElementById("musicBtn").addEventListener("click", async ()=>{
+musicOn = !musicOn;
+document.getElementById("musicBtn").textContent = musicOn ? "🎵 Music ON" : "🎵 Music OFF";
+if(musicOn){
+try{ await lofi.play(); }catch{}
+}else{
+lofi.pause();
+}
+});
+
+// প্রথম user interaction এ autoplay unlock
+window.addEventListener("click", async ()=>{
+if(musicOn && lofi.paused){
+try{ await lofi.play(); }catch{}
+}
+}, { once:true });
 
 function addPts(x){ if(x > 0) pendingPoints += x; }
 
@@ -394,7 +427,7 @@ setTimeout(()=>f.remove(),700);
 
 function save(){
 S.lastSeen = Date.now();
-localStorage.setItem(SAVE_KEY, JSON.stringify({ ...S, pendingPoints }));
+localStorage.setItem(SAVE_KEY, JSON.stringify({ ...S, pendingPoints, musicOn }));
 }
 
 function load(){
@@ -404,6 +437,7 @@ try{
 const d = JSON.parse(raw);
 Object.assign(S, d);
 pendingPoints = d.pendingPoints || 0;
+if(typeof d.musicOn === "boolean") musicOn = d.musicOn;
 }catch{}
 }
 
@@ -426,7 +460,8 @@ spores.textContent = nf(S.spores);
 tap.textContent = nf(tapVal());
 sps.textContent = nf(spsVal());
 mult.textContent = S.multiplier.toFixed(2) + "x";
-soundBtn.textContent = S.sound ? "🔊 Sound ON" : "🔈 Sound OFF";
+soundBtn.textContent = S.sound ? "🔊 SFX ON" : "🔈 SFX OFF";
+musicBtn.textContent = musicOn ? "🎵 Music ON" : "🎵 Music OFF";
 
 shop.innerHTML = "";
 for(const u of U){
@@ -434,7 +469,7 @@ const c = cost(u), l = lvl(u.id);
 const row = document.createElement("div");
 row.className = "row";
 row.innerHTML = `<div>
-<div class="name">${u.name} <span style="font-size:11px;color:#9fb3df">(Lv ${l})</span></div>
+<div class="name">${u.name} <span style="font-size:11px;color:#f0b4b4">(Lv ${l})</span></div>
 <div class="desc">${u.desc}</div>
 </div>`;
 
@@ -471,7 +506,6 @@ floatPlus("+" + Math.floor(gain), e.clientX - r.left, e.clientY - r.top);
 beep(880,.03,.02);
 render();
 });
-
 prestigeBtn.addEventListener("click",()=>{
 if(S.spores < 50000) return;
 if(!confirm("Bloom Reset? progress reset হবে.")) return;
@@ -496,6 +530,7 @@ localStorage.removeItem(SAVE_KEY);
 location.reload();
 });
 
+// Main loop
 setInterval(()=>{
 const g = spsVal();
 S.spores += g;
@@ -503,9 +538,12 @@ addPts(g);
 render();
 },1000);
 
-setInterval(()=>flushPoints("interval"),5000);
+// Faster leaderboard update
+setInterval(()=>flushPoints("fast"),2500);
+setInterval(()=>endRun(),15000);
+
 setInterval(save,10000);
-setInterval(()=>endRun(),60000);
+
 document.addEventListener("visibilitychange",()=>{
 if(document.visibilityState === "hidden"){
 flushPoints("hidden");
